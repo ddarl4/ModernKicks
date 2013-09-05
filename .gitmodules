@@ -1,0 +1,6 @@
+[submodule "SimpleTwitterBot"]
+	path = SimpleTwitterBot
+	url = https://github.com/yasulab/SimpleTwitterBot.git
+[submodule "twitter"]
+	path = twitter
+	url = https://github.com/sixohsix/twitter.git
