@@ -15,9 +15,7 @@
 
 
 
-import twitter
-
-
+import twitter 
 import twitter, os, time, sys
 from random import choice
 from config import Config
@@ -59,7 +57,7 @@ t = Twitter(
 # Get your "home" timeline
 t.statuses.home_timeline()
 
-twttr = Twitter(auth=OAuth(OAUTH_TOKEN, OAUTH_SECRET,
+twttr = twitter.Twitter(auth=twitter.OAuth(OAUTH_TOKEN, OAUTH_SECRET,
                        CONSUMER_KEY, CONSUMER_SECRET))
 
 # Get a particular friend's timeline
