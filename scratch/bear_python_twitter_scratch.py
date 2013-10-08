@@ -26,7 +26,44 @@ tmLine = api.GetHomeTimeline()
 print [x for x in tmLine]
 
 #search for phrase 
-searchRes = api.GetSearch(term='gene expression',count=3)
+searchRes = api.GetSearch(term='dog not included',count=20)
+for res in searchRes:
+    print res.text
 oneStatus = searchRes[0]
 print oneStatus.text
+
+#open craigslist 
+url = 'http://nyc.craigslist.org'
+br.open(url)
+br.select_form(nr=0)
+br.form['query'] = '"dog not included"' #see form.controls
+br.submit()
+html = br.response().read()
+soup = BeautifulSoup(html)
+titleTag = soup.html.head.title
+
+#make a list of the CL findings
+body1 = soup.html.body.contents[3]
+body2 = body1.contents[5]
+links2 = body2.findAll('a')
+linkList = []
+for link in links2:
+    if len(link.attrs) > 1:
+        tup1 = link.attrs[1]
+        if (tup1[0] == 'class') and (tup1[1] == 'i'):
+            tup2 = link.attrs[0]
+            resLink = tup2[1]
+            if resLink[:4] == 'http':
+                linkList.append(resLink)
+            else:
+                linkList.append(url + resLink)
+
+# make dog not included post:
+for ilink,link in enumerate(linkList[:10]):
+    post = 'dog not included - post ' + str(ilink+1) + ' ' + link
+    print post 
+    status = api.PostUpdate(post)
+    time.sleep(10)
+
+### next search twttr for the phrase 'dog not included' or 'dogs not included'
 

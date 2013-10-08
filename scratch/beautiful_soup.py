@@ -1,6 +1,7 @@
 import mechanize
 import cookielib
 from BeautifulSoup import BeautifulSoup
+import urllib2
 # import html2text
 
 # Browser
@@ -74,5 +75,48 @@ for lnk in LinkList:
 
 
 ['title']
+
+#open craigslist 
+url = 'http://boston.craigslist.org'
+br.open(url)
+br.select_form(nr=0)
+br.form['query'] = '"dog not included"' #see form.controls
+br.submit()
+html = br.response().read()
+soup = BeautifulSoup(html)
+titleTag = soup.html.head.title
+
+
+body1 = soup.html.body.contents[3]
+body2 = body1.contents[5]
+links2 = body2.findAll('a')
+linkList = []
+for link in links2:
+    if len(link.attrs) > 1:
+        tup1 = link.attrs[1]
+        if (tup1[0] == 'class') and (tup1[1] == 'i'):
+            tup2 = link.attrs[0]
+            resLink = tup2[1]
+            if resLink[:4] == 'http':
+                linkList.append(resLink)
+            else:
+                linkList.append(url + resLink)
+
+
+
+
+forms = mechanize.ParseFile(url)
+
+search  = ['tour','58']
+c = urllib2.urlopen(url)
+page = c.read()
+soup = BeautifulSoup(page)
+links =  soup('a')
+
+for link in links:
+   for item in search:
+     if (string.find(str(link.string).lower(),item) != -1):
+         print '  > FOUND SEARCH WORD : ' + item
+         webbrowser.open(str(link['href']))
 
 
