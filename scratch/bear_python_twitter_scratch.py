@@ -3,6 +3,9 @@
 import twitter, os, time, sys
 from random import choice
 from config import Config
+import mechanize
+import cookielib
+from BeautifulSoup import BeautifulSoup
 
 # config file
 CONFIG = '/Users/hogstrom/Documents/code/configs/bot2.cfg'
@@ -26,14 +29,28 @@ tmLine = api.GetHomeTimeline()
 print [x for x in tmLine]
 
 #search for phrase 
-searchRes = api.GetSearch(term='dog not included',count=20)
+searchRes = api.GetSearch(term='dog not included',count=4)
 for res in searchRes:
     print res.text
 oneStatus = searchRes[0]
 print oneStatus.text
 
+# Set paramaters for Browser object 
+br = mechanize.Browser()
+# Cookie Jar
+cj = cookielib.LWPCookieJar()
+br.set_cookiejar(cj)
+# Browser options
+br.set_handle_equiv(True)
+br.set_handle_gzip(True)
+br.set_handle_redirect(True)
+br.set_handle_referer(True)
+br.set_handle_robots(False)
+# Follows refresh 0 but not hangs on refresh > 0
+br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
+
 #open craigslist 
-url = 'http://nyc.craigslist.org'
+url = 'http://sfbay.craigslist.org/'
 br.open(url)
 br.select_form(nr=0)
 br.form['query'] = '"dog not included"' #see form.controls
@@ -59,11 +76,25 @@ for link in links2:
                 linkList.append(url + resLink)
 
 # make dog not included post:
-for ilink,link in enumerate(linkList[:10]):
+for ilink,link in enumerate(linkList[:5]):
     post = 'dog not included - post ' + str(ilink+1) + ' ' + link
     print post 
     status = api.PostUpdate(post)
     time.sleep(10)
 
 ### next search twttr for the phrase 'dog not included' or 'dogs not included'
+# also '#dognotincluded'
+# make bank of re-tweets 'absolutly breath taking puppy you have there'
+# 'that dog is stunning'
+
+### add ebay search
+
+## re-tweet 5 most recent dog not included posts
+searchRes = api.GetSearch(term='dog not included',count=5)
+for res in searchRes:
+    print res.text
+    status = api.PostRetweet(res.id)
+    time.sleep(10)
+
+
 
