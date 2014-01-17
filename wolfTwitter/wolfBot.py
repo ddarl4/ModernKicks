@@ -71,12 +71,38 @@ class howl_tweet(object):
             status = self.api.PostUpdate(post)
             time.sleep(2)
     
-    def retweet_search_results(self,search_phrase='dog not included',n_posts=5):
+    def retweet_search_results(self,search_phrase='"dog not included"',n_posts=5):
         '''
         post links from craigslist search 
         '''
         searchRes = self.api.GetSearch(term=search_phrase,count=n_posts)
         for res in searchRes:
+            if res.user.id == self.self_id:
+                print 'skipping self re-tweet'
+                continue
             print res.text
             status = self.api.PostRetweet(res.id)
-            time.sleep(10)
+            time.sleep(2)
+
+    def verify_credentials(self):
+        '''
+        verify credentials to get self info
+
+        '''
+        usrSelf = self.api.VerifyCredentials()
+        self.self_user = usrSelf
+        self.self_id = usrSelf.id
+
+    def favorite_search_results(self,search_phrase='"dog not included"',n_posts=5):
+        '''
+        post links from craigslist search 
+        '''
+        searchRes = self.api.GetSearch(term=search_phrase,count=n_posts)
+        for res in searchRes:
+            if res.user.id == self.self_id:
+                print 'skipping self re-tweet'
+                continue
+            print res.text
+            status = self.api.CreateFavorite(id=res.id)
+            time.sleep(2)
+    
