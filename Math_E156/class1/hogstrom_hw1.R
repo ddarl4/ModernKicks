@@ -168,15 +168,22 @@ mean(product^2) - mean(TestResults$X^2)*mean(TestResults$Y^2)
 #### Part 5 ####
 # Make a data frame by loading the file cereals.csv from your Data subfolder 
 # and write a script that does the following. The details are up to you.
-
+cerials <- read.csv('/Users/hogstrom/Documents/code/ModernKicks/Math_E156/class1/Cereals.csv')
 
 # Make a barplot.
+barplot(table(cerials$Age))
 
 # Make a histogram.
-# Make a contingency table using two factors.
-# Calculate a mean broken down by factor.
-# Extract a subset of one numeric variable for one factor.
+hist(cerials$Sodiumgram)
 
+# Make a contingency table using two factors.
+table(cerials$Age,cerials$Shelf)
+
+# Calculate a mean broken down by factor.
+SodimMean <- tapply(cerials$Sodiumgram, cerials$Age ,mean); SodimMean
+
+# Extract a subset of one numeric variable for one factor.
+bottom <- cerials[cerials$Shelf == 'bottom',]; bottom
 
 
 
