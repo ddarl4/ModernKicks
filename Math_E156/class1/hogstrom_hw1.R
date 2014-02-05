@@ -1,66 +1,8 @@
 # Larson Hogstrom - HW1
 # MATH_E156 - 1/30/2014
 
-
-### Tutorial 1
-fd <- read.csv("/Users/hogstrom/Documents/code/ModernKicks/Math_E156/extra_datasets/Data/FlightDelays.csv")
-names(fd)
-head(fd)
-#The columns are the variables. There are two types of variables: 
-#numeric, for example, FlightLength and Delay and factor 
-#(also called categorical) (for example Carrier and DepartTime). The rows are called 
-#observations or cases.
-dim(fd)
-
-#summary of variable 'Carrier'
-table(fd$Carrier)
-table(fd$FlightLength)
-barplot(table(fd$Carrier))
-
-#compare two categorical variables
-table(fd$Carrier, fd$Delayed30)
-hist(fd$Delay)
-
-# numeric summaries
-delay <- fd$Delay
-mean(delay)
-median(delay)
-mean(delay,trim=.25)
-
-# check that sd = sqrt(var)
-sd(delay) == sqrt(var(delay))
-
-#If you need the population variance 
-#(that is, denominator of 1/n instead of 1/(n-1))
-n <- length(delay)
-(n-1)/n*var(delay)
-
-
-tapply(delay,fd$Carrier,mean)
-tapply(delay,fd$DepartTime,median)
-boxplot(Delay ~ Day, data=fd)
-tapply(delay, fd$DepartTime, summary)
-boxplot(Delay ~ DepartTime, data = fd)
-seq(0,3,by=.2)
-
-x <- c(2, 0, -4) # combine ints into a sequence
-w <- 6:10
-
-which(x < 4)
-index <- which(x < 4)
-x[index]
-
-
-delay <- subset(FlightDelays, select = Delay, drop = TRUE)
-delay2 <- subset(fd,select=Delay,subset=Day != "Mon",drop=TRUE)
-
-#obtain random sample without replacement:
-sample(10,4)
-sample(10,4,replace=TRUE)
-
-
 ### PART 1 ###
-
+fd <- read.csv("FlightDelays.csv")
 # Determine the median flight delay for each day of the week.
 delay <- fd$Delay
 tapply(delay,fd$Day,median)
@@ -82,21 +24,20 @@ hist(dfDen$FlightLength)
 # welcome to check your answer by approaching this as a counting problem, 
 # but the challenge is to do it by having R count rows for each event.
 
-df <- read.csv('/Users/hogstrom/Documents/code/ModernKicks/Math_E156/class1/Dice3.csv')
-
+df <- read.csv('Dice3.csv')
 # probability P 1 that they all show the same number, 
 df3Match <- df[(df$Red3 == df$Green3) & (df$Red3 == df$White3),] #df where all dice match
-P1 <- nrow(df3Match)/ nrow(df) # number of outcomes where all match divided by all possible outcomes
+P1 <- nrow(df3Match)/ nrow(df); P1 # number of outcomes where all match divided by all possible outcomes
 
 # probability P 2 that they show two different numbers
 # (or probability that two of the dice match)
 No3Match <- df[-df3Match$X,] # exclude instances where all 3 match
 df2Match <- No3Match[(No3Match$Red3 == No3Match$Green3) | (No3Match$Red3 == No3Match$White3) | (No3Match$Green3 == No3Match$White3),] #df where two dice match
-P2 <- nrow(df2Match)/ nrow(df) # number of outcomes where all match divided by all possible outcomes
+P2 <- nrow(df2Match)/ nrow(df); P2 # number of outcomes where all match divided by all possible outcomes
 
 # probability P3 that they show three different numbers
 NoMatch <- df[(df$Red3 != df$Green3) & (df$Red3 != df$White3) & (df$Green3 != df$White3),] #df where all dice match
-P3 <- nrow(NoMatch)/ nrow(df) # number of outcomes where all match divided by all possible outcomes
+P3 <- nrow(NoMatch)/ nrow(df); P3 # number of outcomes where all match divided by all possible outcomes
 
 #check if the probabilties sum to 1
 if (P1 + P2 + P3 == 1) {
@@ -125,19 +66,19 @@ TestResults = edit(TestResults) #bring up the editor
 Q1<-c(rep(0,12),rep(1,4)); Q1
 Q2<-rep(c(0,0,0,1),4); Q2
 #Now combine the columns into a data frame
-TestResults<-data.frame(Q1,Q2) 
+TestResults<-data.frame(Q1,Q2); TestResults
 # check that the probability of getting a score of 100 on each quiz is 1/4
 pTest1 <- sum(TestResults$Q1)/length(Q1); pTest1
 pTest2 <- sum(TestResults$Q2)/length(Q2); pTest2
 
 # QGrid is done using the expand.grid() function (see CardPairs).
 TestResults<-expand.grid(c(0,0,0,1),c(0,0,0,1), stringsAsFactors = FALSE)  #a giant Cartesian product!
-names(TestResults) <- c("Q1", "Q2") #specify the column names
+names(TestResults) <- c("Q1", "Q2"); TestResults #specify the column names
 
 # Using QRep or QGrid, which should be identical, create two random variables:
 # X is your average quiz score, 100, 50, or 0.
 X <- (TestResults$Q1+TestResults$Q2)/2
-TestResults<-data.frame(TestResults,X)
+TestResults<-data.frame(TestResults,X); TestResults
 
 # Y is your improvement rating. This is 0 if you score worse on the second quiz, 
 # 1 if you score the same on both quizzes, 2 if you score better on the second quiz.
@@ -158,12 +99,36 @@ TestResults<-data.frame(TestResults,Y); TestResults
 # Calculate E[XY ] − E[X]E[Y ]. Since the random variables are uncor- related, this should equal zero.
 mean(TestResults$X*TestResults$Y) - mean(TestResults$X)*mean(TestResults$Y)
 
-# Calculate E[X2Y 2] − E[X^2]E[Y^2]. If X and Y were independent this would also equal zero.
-product <- TestResults$X*TestResults$Y
-mean(product^2) - mean(TestResults$X^2)*mean(TestResults$Y^2)
+# Calculate E[X^2Y^2] − E[X^2]E[Y^2]. If X and Y were independent this would also equal zero.
+xSqr <- (TestResults$X)^2
+ySqr <- (TestResults$Y)^2
+mean(xSqr*ySqr) - mean(xSqr)*mean(ySqr)
 
 # Invent an event A involving X and and an event B involving Y such that P (A ∩ B) ̸= P (A)P (B), 
 # and do the calculation of these probabilities in R by counting rows.
+
+# Let A = Prob(X = 0.5) - prob(scores are different)
+# Let B = Prob(Y = 0) - prob(that the score got worse)
+# We would not expect these to be independent since if the score got
+# worse, the two scores must have been different
+
+#P (A)
+halfRight <-TestResults[TestResults$X == 0.5,]
+pA <- nrow(halfRight) / nrow(TestResults); pA
+
+#P (B)
+scoreWorse <-TestResults[TestResults$Y == 0,]
+pB <- nrow(scoreWorse) / nrow(TestResults); pB
+
+# P (A ∩ B)
+AorB <- TestResults[(TestResults$Y == 0) | (TestResults$X == 0.5),]
+pAorB <- nrow(AorB) / nrow(TestResults); pAorB
+
+# P (A ∩ B) ̸= P (A)P (B)
+if (pAorB != (pA*pB)) {
+    print("P (A ∩ B) != P (A)P (B)")
+}
+
  
 #### Part 5 ####
 # Make a data frame by loading the file cereals.csv from your Data subfolder 
