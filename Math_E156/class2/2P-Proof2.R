@@ -83,7 +83,7 @@ var(sample(delays,5))
 #With lots of repetitions of a small sample we get close to the population variance
 #We sample with replacement so that we are summing independent random variables
 #Now we are sampling 5 flights from the population and should use
-var(sample(delays,5,replace = TRUE))}
+var(sample(delays,5,replace = TRUE))
  
 N<- 100000; svars<-numeric(N) #initialize; use 10000 on a slow computer
 for (i in 1:N) {
