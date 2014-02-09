@@ -40,6 +40,7 @@ MC2<-integrate(function(x) (x-mu)^2*dnorm(x,3,2), -Inf, Inf); MC2
 sigma<- sqrt(MC2$value); sigma
 MC3<-integrate(function(x) (x-mu)^3*dnorm(x,3,2), -Inf, Inf); MC3 #no skewness
 MC4<-integrate(function(x) (x-mu)^4*dnorm(x,3,2), -Inf, Inf); MC4
+skewness <- MC3$value/sigma^3; skewness
 kurtosis <- MC4$value/sigma^4-3; kurtosis #zero for a normal dstribution
 
 #Example 2.13 - exponential with lambda = 1
@@ -54,11 +55,13 @@ MC3<-integrate(function(x) (x-mu)^3*dexp(x,1), 0, Inf); MC3 #skewed to the right
 MC3$value/sigma^3     #the skewness
 MC4<-integrate(function(x) (x-mu)^4*dexp(x,1), 0, Inf); MC4
 kurtosis <- MC4$value/sigma^4-3; kurtosis #zero for a normal distribution
+skewness <- MC3$value/sigma^3; skewness
 
 #An alternative approach is to draw a lot of samples from the distribution
 #Then you can compute sample moments
-x = rexp(10^4, 1);head(x)
+x = rexp(10^5, 1);head(x)
 hist(x, breaks = 200, col= "red", add = TRUE, freq = FALSE)
+# hist(x, breaks = 200, col= "red", freq = FALSE)
 x.bar <- mean(x); x.bar    #should be close to mu = 1
 MC2.bar <- mean((x-x.bar)^2)
 S<- sqrt(MC2.bar); S    #should be close to 1
