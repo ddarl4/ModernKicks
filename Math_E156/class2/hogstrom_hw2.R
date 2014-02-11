@@ -148,7 +148,7 @@ qAA = quantile(aaFd$Delay,probs=rng)
 plot(rng,qAA, col= 'blue')
 qUA = quantile(uaFd$Delay,probs=rng)
 plot(rng,qUA)
-
+par(mfrow = c(1, 1)) #reset to default layout
 
 
 
