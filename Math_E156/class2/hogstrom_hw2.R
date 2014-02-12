@@ -30,7 +30,7 @@ print('this distribution appears approximately normal')
 boxplot(Di.change ~ Fertilizer, data=spruce, ylab="diameter", xlab="Fertilizer")
 # d) use tapply to find the numeric summaries of the diameter changes for 
 # the two levels of fertilization
-tapply(spruce$Di.change, spruce$Fertilizer, summary)
+FertSumm <- tapply(spruce$Di.change, spruce$Fertilizer, summary); FertSumm
 # e) scatter plot of height changes by diameter changes 
 plot(spruce$Ht.change, spruce$Di.change)
 print('seedling hight and diameter are positivly correlated')
@@ -43,23 +43,18 @@ print('seedling hight and diameter are positivly correlated')
 # with “fat tails.” On the same plot overlay, in green, a graph of 
 # the density function for the standard normal distribution dnorm(x)
 curve(dt(x,6), from = -3, to = 3)
-par(new=T)
-# curve(dnorm(x), from = -3, to = 3, color="green")
-curve(dnorm(x), from = -3, to = 3, col="green")
-legend("topright", legend = c("student t","normal"), col = c("black","green"))
-par(new=F)
+curve(dnorm(x), from = -3, to = 3, col="green", add = TRUE)
 
 # (b) Determine the 0.1 and 0.9 quantiles for each of these distributions and 
 # add vertical lines (in black and green respectively) that mark off the 
 # interval on which 80% of the area under the graph lies for each distribution.
-curve(dnorm(x), from = -3, to = 3)
-abline(v = qnorm(.9), lty= 1, col = "black")  
-abline(v = qnorm(.1), lty= 1, col = "black")  
-
-curve(dt(x,6), from = -3, to = 3, col = "green")
-abline(v = qt(.9,6), lty= 1, col = "green")  
-abline(v = qt(.1,6), lty= 1, col = "green")  
-
+curve(dt(x,6), from = -3, to = 3)
+curve(dnorm(x), from = -3, to = 3, col="green", add = TRUE)
+abline(v = qnorm(.9), lty= 1, col = "black", add = TRUE)  
+abline(v = qnorm(.1), lty= 1, col = "black", add = TRUE)  
+# add lines for student-t quantiles
+abline(v = qt(.9,6), lty= 1, col = "green", add = TRUE)
+abline(v = qt(.1,6), lty= 1, col = "green", add = TRUE)
 
 # (c) Plot a graph of the Student’s t distribution function for six degrees of freedom 
 # pt(x,6) on the interval [-3,3]. On the same plot overlay, in green, a 
@@ -71,7 +66,8 @@ curve(pnorm(x), from = -3, to = 3, col="green", add = TRUE)
 # curve(qnorm(x), from = -3, to = 3, col="green")
 abline(h = .9, lty= 1, col = "black")  
 abline(h = .1, lty= 1, col = "black") 
-
+print('.1 quantile is about -1.4 and -1.3 for the Students T and normal distribution respectively')
+print('.9 quantile is about 1.4 and 1.3 for the Students T and normal distribution respectively')
 
 # (d) Plot a graph of the Student’s t quantile function for 
 # six degrees of free- dom qt(x,6) on the interval [-3,3]. 
@@ -81,12 +77,20 @@ abline(h = .1, lty= 1, col = "black")
 # estimate the 0.1 and 0.9 quantiles. (Since dnorm() and qnorm() are inverse 
 # functions, this is the same plot as in part (c), with the axes reversed!)
 curve(qt(x,6), from = 0, to = 1, col="black")
-curve(qnorm(x), from = 0, to = 1, col="green")
-# curve(qnorm(x), from = -3, to = 3, col="green")
+curve(qnorm(x), from = 0, to = 1, col="green", add = TRUE)
+abline(v = .9, lty= 1, col = "black")  
+abline(v = .1, lty= 1, col = "black") 
+print('.1 quantile is about -1.4 and -1.3 for the Students T and normal distribution respectively')
+print('.9 quantile is about 1.4 and 1.3 for the Students T and normal distribution respectively')
 
 # (e) Compare the Student’s t distribution for six degrees of freedom 
 # with the normal distribution by using qqnorm() and qqline().
- x <- rt(5000,6)
+# plot with random values
+x <- rt(5000,6)
+qqnorm(x)
+qqline(x)
+# plot with equally spaced values
+x <- seq(-5, 5, by = 0.1)
  qqnorm(x)
  qqline(x)
 
@@ -101,7 +105,7 @@ curve(qnorm(x), from = 0, to = 1, col="green")
 # but there are so many data points that it really doesn’t matter!)
 fd <- read.csv("FlightDelays.csv")
 # colnames(fd) # view column names
-mu = mean(fd$Delay)
+mu = mean(fd$Delay); mu
 # MC2 = var(fd$Delay) # MC2 = Var
 MC2 <- mean((fd$Delay-mu)^2); MC2  #the variance
 MC3 <- mean((fd$Delay-mu)^3); MC3 
@@ -135,21 +139,17 @@ kurtosis <- MC4$value/sigma^4-3; kurtosis #zero for a normal dstribution
 # (a) Problem 17 on page 33. By using the technique from 
 # the last section of the plot tutorial, 
 # you can place the graphs side by side in the top row of a 2x2 grid.
-aaFd = fd[fd$Carrier == "AA",]
-uaFd = fd[fd$Carrier == "UA",]
+aaFd <- fd[fd$Carrier == "AA",]
+uaFd <- fd[fd$Carrier == "UA",]
 par(mfrow = c(2, 2)) #2x2 layout
 plot.ecdf(aaFd$Delay, col = 'blue')
 plot.ecdf(uaFd$Delay)
 
 # (b) In the bottom row, plot the quantiles for 100 values ranging from 0.01 to 
 # 0.99. You will get essentially the same graphs, but with the axes interchanged.
-rng = 1:99/100
-qAA = quantile(aaFd$Delay,probs=rng)
+rng <- 1:99/100
+qAA <- quantile(aaFd$Delay,probs=rng)
 plot(rng,qAA, col= 'blue')
 qUA = quantile(uaFd$Delay,probs=rng)
 plot(rng,qUA)
 par(mfrow = c(1, 1)) #reset to default layout
-
-
-
-
