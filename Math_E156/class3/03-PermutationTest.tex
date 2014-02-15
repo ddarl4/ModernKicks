@@ -1,0 +1,299 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=R,basicstyle=\scriptsize\ttfamily,commentstyle=\ttfamily\color{gray},frame=single,breaklines=true,keepspaces = true,keywordstyle=\color{red},xleftmargin=-10mm}
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+MATHEMATICS E-156, SPRING 2014 \\
+MATHEMATICAL FOUNDATIONS OF STATISTICAL SOFTWARE
+
+\smallskip
+
+Module \#3 (Permutation Tests)
+\end{center}
+
+Last modified: February 10, 2014
+
+\medskip
+
+\paragraph*{Reading from Chihara and Hesterberg}
+
+\begin{itemize}
+\item Chapter 3, sections 3.1 through 3.4
+
+\item Appendix A.3 and Appendix B.1
+
+\item The F distribution is covered in section B.13 on pages 391-393. Feel free to ignore it if you wish.
+
+\item The hypergeometric distribution is covered in Appendix B.5. Don't worry about Theorem B.4.
+
+\end{itemize}
+
+\paragraph*{Optional Reading from Haigh}
+
+\begin{itemize}
+\item Look up the Bernoulli, binomial, and hypergeometric distributions in the index if you want to see more examples.
+\end{itemize}
+
+
+\paragraph*{Proof of the Week}
+\begin{itemize}
+\item Prove that the sum of $n$ independent Bernoulli random variables, each with parameter $p$, is a binomial random variable $ Y \sim$ Binom$(n,p)$, and that
+
+$$E[Y] = np, \text{ Var }Y = np(1-p).$$
+\end{itemize}
+
+\pagebreak
+
+
+\paragraph*{R scripts}
+\begin{itemize}
+\item Script 3A-Permutation Test. This script explains how to carry out a permutation test for hypothesis testing, both in the case where is is possible to look at all possible permutations and in the more common case where it is necessary to sample random permutations.
+\begin{itemize}
+\item Topic 1 - a tiny permutation test
+\item Topic 2 - a permutation test with a larger data set
+\item Topic 3 - data from an actual experiment
+\item Topic 4 - generating the subsets by random sampling
+\end{itemize}
+\item Script Script 3B-PermSkewed.R  Section 3.3, pages 44-51.
+This script deals with a data set where classical methods fail because the data are skewed and the subgroups being compared are wildly unequal in size.
+\begin{itemize}
+\item Topic 1 - dealing with skewed data and unequal sample size
+\item Topic 2 - Using other statistics 
+\end{itemize}
+
+\item Script 3C-PermTestVariance.R     Example 3.5 on page 51.
+This script shows how a permutation test can be used to test for unequal variance instead of for unequal mean. The result, in some cases, can be replicated by using Fisher's F distribution. We will not cover this in any detail, but you might find it useful to know how it arises.
+\begin{itemize}
+\item Topic 1 - A permutation test for equal variance
+\item Topic 2 - Testing real-world data for unequal variance
+\item Topic 3 - Testing for equal variance in skewed data
+\end{itemize}
+
+\item Script 3D-GSSContingency.R     Based on pp. 54-57 of the textbook.\\
+This script explains how to use permutation tests to explore whether two factors (columns in a data frame) might not be independent. It demonstrates the use of the chi-square statistic, for which the theory will appear much later in the course.
+\begin{itemize}
+\item Topic 1 - the chi-square statistic
+\item Topic 2 - A permutation test for independence
+\end{itemize}
+
+\item Script 3E-HyperPerm.R     Based on Appendix B.5
+This script replicates the results of an exact permutation test by using the hypergeometric distribution and by using the Fisher exact test that is based on it.
+
+\item Script 3P-Proof 3.R
+This script illustrates sampling that is done using the built-in R functions for the Bernoulli and binomial distributions.
+
+
+
+
+
+
+\end{itemize}
+
+\pagebreak
+
+
+
+
+
+\paragraph*{Mathematical notes}
+
+
+
+\begin{enumerate}
+
+\item  Proof of the week \\Prove that the sum of $n$ independent Bernoulli random variables, each with parameter $p$, is a binomial random variable $ Y \sim$ Binom$(n,p)$, and that
+$$E[Y] = np, \text{ Var }Y = np(1-p).$$
+\begin{enumerate}
+\item A Bernoulli random variable $X$ has the value 1 with probability $p$, 0 with probability $1-p.$ Calculate its expectation and variance.
+\item (The easy way) A binomial random variable $Y$ is the sum of $n$ independent Bernoulli random variables: $Y = X_1 + X_2 + \cdots + X_n$. Calculate its expectation and variance from this property alone.
+\item If $Y$ has the value $r$, then $r$ of the $X_i$ have the value 1, $n-r$ have the value 0. Calculate the probability of this event, which can happen in many ways, and so determine the mass (density) function $P(Y = r)$.
+\item (The hard way -- not required) Calculate $E[Y]$ and Var$[Y]$ directly from the mass function for the binomial distribution.
+\end{enumerate}
+
+
+
+\pagebreak
+
+\item The hypergeometric distribution and permutation testing
+
+Although the hypergeometric distribution is not mentioned in Chapter 3, it is well explained in Appendix B.5, and it is supported in R by the usual set of four functions. It describes exactly what happens when you do a permutation test with two factors. Using the example of Appendix B.5, suppose that you have a data frame with two columns. Column Gender has $M$ ```Woman" and $N$ ``Man. Column Commitee has $n$ ``On'' and $M+N-n$ ``Off.'' The expected number of women on the committee is of course $\frac{M}{M+N}$. 
+
+The adminstration chooses a committee with $W$ women, and you suspect that women are underrepresented. So you permute the second column and make a histogram of the number of women $x$ who end up on the committee to see how frequently the event $x \leq W$ occurs.
+
+There are $\binom{M+N}{n}$ ways to select a committee with $n$ members.
+There are $\binom{M}{x}$ ways to select $x$ of the $M$ women.
+There are $\binom{M}{n-x}$ ways to select $n-x$ of the $N$ men.
+
+So if the committee is formed by permuting the second column and choosing the rows where the second column has ``On,'' the probability that there are $x$ women on the committee is
+$$P(X = x) = \frac{\binom{M}{x}\binom{M}{n-x}}{\binom{M+N}{n}}.$$
+
+This probability is given by the R function \verb!dhyper(x, M, N, n)!
+
+The contingency table for the two factors looks like this:
+
+$\begin{array}{|c|c|c|}
+\hline
+ & \mbox{Women} & \mbox{Men} \\
+\cline{1-3}
+\text{On}  & x &  M+N-x\\
+\cline{1-3}
+\text{Off}  & M-x & N-n+x\\
+\hline
+\end{array}$
+
+For a $2 \times 2$ test, the R function \verb!phyper(x, M, N, n)! replicates the result of a perfect permutation test (using all permutations instead of a random sample). The R function \verb!fisher.test()! automates this test. The chi-square test described in the textbook gives a good approximation when none of the expected counts is too small.
+
+\pagebreak
+
+\item A contingency table with one row - why does chi-square work?
+
+Suppose we make $n$ independent Bernoulli trials, each with probability $p$.
+
+A table of the results will look like this:
+
+$\begin{array}{|c|c|}
+\hline
+ \mbox{Success} & \mbox{Failure} \\
+\cline{1-2}
+   x &  n-x\\
+
+\hline
+\end{array}$
+
+A table of the expected results will look like this:
+
+$\begin{array}{|c|c|}
+\hline
+ \mbox{Success} & \mbox{Failure} \\
+\cline{1-2}
+   np &  n-np\\
+
+\hline
+\end{array}$
+
+The chi-square distribution with one degree of freedom has an expectation of 1. Show that the random variable that results from summing over both entries in the table also has an expectation of 1.
+
+
+
+
+
+
+\end{enumerate}
+
+\pagebreak
+
+
+\paragraph*{Section problems}
+
+I have no idea what the answers to the following questions will turn out to be. Perhaps they will give you ideas for projects.
+
+The Red Sox data came from {\tt http://www.baseball-reference.com}.
+
+The Olympic results came from {\tt www.sochi2014.com}.
+
+\begin{enumerate}
+
+
+
+\item The file Slopestyle.csv (on the Class 3 page) contains scores for the first and second runs of the recent slopestyle snowboarding competition in Sochi. Carry out permutation tests to answer the following questions. Different members of the class can work on different parts of the problem.
+\begin{enumerate}
+\item Is there a significant difference in the mean score (including both runs) for men and for women?
+\item Is there a significant difference in the median best score for men and for women?
+\item Is there a significant difference in the absolute value of the difference between the scores on the two runs for men and for women?
+
+\end{enumerate}
+
+\item The file RedSox2013.csv (on the Class 3 page) includes results from every Red Sox game in 2013. Carry out permutation tests to answer the following questions. Different members of the class can work on different parts of the problem.
+\begin{enumerate}
+\item Conduct a permutation test for independence of WonLost and Away. Compare with the result of the built-in chi-square test.
+\item Is there a statistically significant difference between the average duration of a day game and of a night game?
+\item Is there a statistically significant difference between the variance in attendance at home games and away games?
+\item Was the number of games that the Red Sox won in the postseason (after game 162) unexpectedly high? Confirm the result of the permutation test by using the hypergeometric distriibution.
+
+\end{enumerate}
+
+\end{enumerate}
+
+
+\pagebreak
+
+
+\paragraph*{Homework assignment}
+
+This assignment should be submitted as a single R script. Include enough comments so that it is clear what you are doing and where each problem begins. You can upload it to the dropbox on the Class 3 page of the Web site. 
+
+It is OK to paste and edit lines from the scripts on the course Web site. It is not OK to paste lines from your classmates' solutions!
+
+\begin{enumerate}
+
+
+
+
+\item Problem 9 on page 70 (permutation test for a numeric variable)
+
+\item Problem 12 on page 71 (permutation and chi square test for a 2 x 2 contingency table)
+
+\item Problem 7 on page 69 (flight delays, including comparison of variances)
+
+\item In the 2013 regular season, the San Diego Chargers played 16 games, winning 9 and losing 7, in the sequence LWLWLWWLLLWLWWWW.
+
+It is generally felt that they ``finished strong'' in winning four of their last six games.
+\begin{enumerate}
+
+\item Carry out an exact permutation test to determine the probability that is the wins and losses were scrambled, the last six games would include four or more wins.
+\item Replicate your answer by using the multinomial distribution.
+\item Do a binomial approximation to find the probability that if the Chargers play six games with a probability $p = 9/16$ of winning each, they will win four or more of the six games. 
+\item Rerun the permutation test by using 10,000 randomly chosen samples of 6 games.
+\end{enumerate}
+
+\item Problem 10a on page 70. First carry out the built-in chi-square test in R (The hard part may be getting the data into the right format), then repeat the test by creatting a data frame with two columns and 286 rows and carrying out a permutation test using the chi square statistic. You should get good but not perfect agreement.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+''
