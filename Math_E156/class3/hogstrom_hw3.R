@@ -38,19 +38,97 @@ pVal<-(length(soMore)+1)/(length(result)+1); pVal # one tailed
 # 2. Problem 12 on page 71 (permutation and chi square test for a 2 x 2 con- tingency table)
 # a) create a table to summarize the relationship between age of target
 # consumer and shelf location
+Cereals <-read.csv("Cereals.csv"); 
+mytable <- xtabs(~Age+Shelf, data=Cereals); mytable
+table(Cereals$Age, Cereals$Shelf)
+#check that there are two cerials marketed for adults on the bottom shelf
+# Cereals[(Cereals$Age == 'adult') & (Cereals$Shelf == 'bottom'),]
 
 # b) Conduct a chi-square test using chisq.test command
-
+chisq.test(Cereals$Age, Cereals$Shelf)
 # c) R returns a warning message. Compute the expected counts for each 
 # cell to see why
-
+Expected <- outer(rowSums(mytable), colSums(mytable))/sum(mytable);Expected
+print("did chisq.test throw a warning because of the small values in the cells?")
+obsChisq <- sum((mytable-Expected)^2/Expected); obsChisq
 # d) Conduct a permuatation test for independence, adapting the code on
 # page 56
-
+B <- 10^4-1
+result<-numeric(B)
+for (i in 1:B)
+ {
+   Age.permutation <-sample(Cereals$Age)
+   perm.table <- table(Age.permutation, Cereals$Shelf)
+   # result[i]<-chisq.test(perm.table)
+   result[i] <- sum((perm.table-Expected)^2/Expected) 
+ }
+#Create a histogram
+hist(result, xlab="chi-square statistic", main="Distribution of chi-square statistic", xlim=c(0,30))
+abline(v=obsChisq,col="blue",lty=5)
+chMore<-which(result >= obsChisq)
+pVal<-(length(chMore)+1)/(length(result)+1); pVal # one tailed
+ 
 #### Part 3 ###
 
 # 3. Problem 7 on page 69 (flight delays, including comparison of variances)
+# a) compute the proportion of times the flights in May and June were
+# delayed more than 20min, and conduct a two-sided test of whether the
+# difference between months is statistically significant.
+fd <- read.csv("FlightDelays.csv")
+# fdMay <- fd[fd$Month == 'May',]
+# fdJune <- fd[fd$Month == 'June',]
+# grtr20June <- sum(fdJune$Delay > 20) / nrow(fdJune); grtr20June
+# grtr20May <- sum(fdMay$Delay > 20) / nrow(fdMay); grtr20May
+nFlights <- nrow(fd)
+nJune <- sum(fd$Month == 'June')
+nMay <- nFlights - nJune
+grtr20June <- sum((fd$Month == 'June') & (fd$Delay > 20)) / nJune; grtr20June
+grtr20May <- sum((fd$Month == 'May') & (fd$Delay > 20)) / nMay; grtr20May
+obsMonthDiff <- grtr20May - grtr20June
+print("To test if difference between months is statistically significant
+    I am chosing the proportion of flights delayed more than 
+    20 minutes as my tests statistic and performing a permutation test")
+# permutation testing 
+B <- 10^4-1
+result<-numeric(B)
+for (i in 1:B)
+ {
+    MO.permuted <- sample(fd$Month)
+    propJune <- sum((MO.permuted == 'June') & (fd$Delay > 20)) / nJune
+    propMay <- sum((MO.permuted == 'May') & (fd$Delay > 20)) / nMay
+    result[i] <- propMay - propJune
+ }
+hist(result, xlab="May-June percent difference", main="Difference between fraction of delays over 20 minutes")
+abline(v=obsMonthDiff,col="blue",lty=5)
+# two-tailed test
+p1<-(length(which(result >= obsMonthDiff))+1)/(length(result)+1)
+p2<-(length(which(result <= obsMonthDiff))+1)/(length(result)+1)
+pVal <- min(p1,p2)*2; pVal
+print("May had significantly less delays over 20 minutes than June")
 
+# b) Compute the variance of the flight delay times in May and June and
+# then conduct a two-sided test of whether the ratio of variance is statistically
+# significantly different from 1.
+varJune <- var(fd[fd$Month == 'June',]$Delay); varJune
+varMay <- var(fd[fd$Month == 'May',]$Delay); varMay
+obsVarRatio <- varJune/varMay; obsVarRatio
+#permutation test
+B <- 10^4-1
+result<-numeric(B)
+for (i in 1:B)
+ {
+    MO.permuted <- sample(fd$Month)
+    varJ <- var(fd[MO.permuted == 'June',]$Delay)
+    varM <- var(fd[MO.permuted == 'May',]$Delay)
+    result[i] <- varJ/varM
+ }
+hist(result, xlab="May-June percent difference", main="Difference between fraction of delays over 20 minutes")
+abline(v=obsVarRatio,col="blue",lty=5)
+# two-tailed test
+p1<-(length(which(result >= obsVarRatio))+1)/(length(result)+1)
+p2<-(length(which(result <= obsVarRatio))+1)/(length(result)+1)
+pVal <- min(p1,p2)*2; pVal
+print("June had significantly higher variance in flight dealys than May.")
 
 #### Part 4 ###
 
@@ -61,10 +139,36 @@ pVal<-(length(soMore)+1)/(length(result)+1); pVal # one tailed
 # (a) Carry out an exact permutation test to determine the probability 
 # that is the wins and losses were scrambled, the last six games would 
 # include four or more wins.
+
+gameNumber <- c(1:16)
+outcomes <- c("L","W","L","W","L","W","W","L","L","L","W","L","W","W","W","W")
+nWin <- sum(outcomes == "W"); nWin
+lastSix <- outcomes[-10:-1]
+nWinLast <- sum(lastSix == "W"); nWinLast
+
+#exact permutation test
+AllSubsets<-combn(1:16,9) # all possible placements of wins
+N <-ncol(AllSubsets); N; 
+result<-numeric(N)
+for (i in 1:N)
+ {
+    winIndex <- AllSubsets[,i]
+    # count wins in the last 6 games
+    result[i] <- sum(winIndex >= 11) 
+ }
+hist(result, xlab="May-June percent difference", main="Difference between fraction of delays over 20 minutes")
+abline(v=nWinLast,col="blue",lty=5)
+# one-tailed test
+pVal<-(length(which(result >= nWinLast))+1)/(length(result)+1)
+
 # (b) Replicate your answer by using the multinomial distribution.
+
+
 # (c) Do a binomial approximation to find the probability that if the 
 # Charg- ers play six games with a probability p = 9/16 of winning each, 
 # they will win four or more of the six games.
+
+
 # (d) Rerun the permutation test by using 10,000 randomly chosen samples of 6 games.
 
 #### Part 5 ###
