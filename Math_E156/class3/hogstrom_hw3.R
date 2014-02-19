@@ -193,12 +193,47 @@ pVal4Wins<-(length(which(result >= nWinLast))+1)/(length(result)+1); pVal5Wins
 
 
 #### Part 5 ###
+# 10a) identify the hypothesis to test to see if there is a relationship 
+# between gender and diet and carry out the test
+# gender vs low-fat diet in midwestern college students
+#       Yes    No
+# W     35     146
+# M     8      97
 
 # 5. Problem 10a on page 70. First carry out the built-in chi-square test 
-# in R (The hard part may be getting the data into the right format), then 
+# in R (The hard part may be getting the data into the right format), 
+
+lowFat <- matrix(c(35,146,8,97),ncol=2,byrow=TRUE)
+colnames(lowFat) <- c("Yes","No")
+rownames(lowFat) <- c("Women","Men")
+lowFat <- as.table(lowFat); lowFat
+chisq.test(lowFat)
+
+### permutation test
 # repeat the test by creatting a data frame with two columns and 286 rows 
 # and carrying out a permutation test using the chi square statistic. You 
 # should get good but not perfect agreement.
 
+Gender <- c(rep("W",181),rep("M",105))
+lfat <- c(rep("Yes",35),rep("No",146),rep("Yes",8),rep("No",97))
+Diet <- data.frame(Gender,lfat)
+lFatTable <- table(Diet$Gender, Diet$lfat); lFatTable
 
-
+Expected <- outer(rowSums(lFatTable), colSums(lFatTable))/sum(lFatTable);Expected
+obsChisq <- sum((lFatTable-Expected)^2/Expected); obsChisq
+# d) Conduct a permuatation test for independence, adapting the code on
+# page 56
+B <- 10^4-1
+result<-numeric(B)
+for (i in 1:B)
+ {
+   gender.permutation <-sample(Diet$Gender)
+   perm.table <- table(gender.permutation, Diet$lfat)
+   # result[i]<-chisq.test(perm.table)
+   result[i] <- sum((perm.table-Expected)^2/Expected) 
+ }
+hist(result, xlab="chi-square statistic", main="Distribution of chi-square statistic", xlim=c(0,30))
+abline(v=obsChisq,col="blue",lty=5)
+chMore<-which(result >= obsChisq)
+pVal<-(length(chMore)+1)/(length(result)+1); pVal # one tailed
+ 
