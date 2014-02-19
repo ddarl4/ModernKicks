@@ -142,9 +142,10 @@ print("June had significantly higher variance in flight dealys than May.")
 
 gameNumber <- c(1:16)
 outcomes <- c("L","W","L","W","L","W","W","L","L","L","W","L","W","W","W","W")
+print("the sequence listed on in question 4 shows 5 wins in the last 6 games")
 nWin <- sum(outcomes == "W"); nWin
-lastSix <- outcomes[-10:-1]
 nWinLast <- sum(lastSix == "W"); nWinLast
+lastSix <- outcomes[-10:-1]
 
 #exact permutation test
 AllSubsets<-combn(1:16,9) # all possible placements of wins
@@ -156,20 +157,40 @@ for (i in 1:N)
     # count wins in the last 6 games
     result[i] <- sum(winIndex >= 11) 
  }
-hist(result, xlab="May-June percent difference", main="Difference between fraction of delays over 20 minutes")
+hist(result, xlab="games won", main="Number of wins in the last 6 games")
 abline(v=nWinLast,col="blue",lty=5)
 # one-tailed test
-pVal<-(length(which(result >= nWinLast))+1)/(length(result)+1)
+pVal<-(length(which(result >= nWinLast))+1)/(length(result)+1); pVal
 
 # (b) Replicate your answer by using the multinomial distribution.
-
+pWin <- nWin/length(outcomes) # probability of winning
+# dbinom(x, size, prob, log = FALSE) # x, q: vector of quantiles.
+# dmultinom(x, size = NULL, prob, log = FALSE)
+pVal5Wins <- dmultinom(c(1,0,1,1,1,1), prob=c(pWin,1-pWin,pWin,pWin,pWin,pWin), log = FALSE)
 
 # (c) Do a binomial approximation to find the probability that if the 
 # Charg- ers play six games with a probability p = 9/16 of winning each, 
 # they will win four or more of the six games.
-
+plot(0:6,dbinom(0:6, 6, pWin), type = "h")
+bDist <- dbinom(0:6, 6, pWin, log = FALSE)
+pVal4Wins <-sum(bDist[5:7]); pVal4Wins # probability of getting 4 or more wins in the last 6 games
+pVal5Wins <-sum(bDist[6:7]); pVal5Wins # probability of getting 5 or more wins in the last 6 games
 
 # (d) Rerun the permutation test by using 10,000 randomly chosen samples of 6 games.
+N <-ncol(AllSubsets); N; 
+result<-numeric(N)
+for (i in 1:N)
+ {
+    win.permutation <-sample(outcomes,6)
+    isWin <- win.permutation == "W"
+    result[i] <- sum(isWin) 
+ }
+hist(result, xlab="games won", main="Number of wins in the last 6 games")
+abline(v=nWinLast,col="blue",lty=5)
+# one-tailed test
+nWinLast <- 4;
+pVal4Wins<-(length(which(result >= nWinLast))+1)/(length(result)+1); pVal5Wins
+
 
 #### Part 5 ###
 
@@ -178,5 +199,6 @@ pVal<-(length(which(result >= nWinLast))+1)/(length(result)+1)
 # repeat the test by creatting a data frame with two columns and 286 rows 
 # and carrying out a permutation test using the chi square statistic. You 
 # should get good but not perfect agreement.
+
 
 
