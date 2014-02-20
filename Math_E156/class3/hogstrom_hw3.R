@@ -200,7 +200,7 @@ pVal4Wins<-(length(which(result >= nWinLast))+1)/(length(result)+1); pVal5Wins
 # W     35     146
 # M     8      97
 
-# 5. Problem 10a on page 70. First carry out the built-in chi-square test 
+#Problem 10a on page 70. First carry out the built-in chi-square test 
 # in R (The hard part may be getting the data into the right format), 
 
 lowFat <- matrix(c(35,146,8,97),ncol=2,byrow=TRUE)
@@ -236,4 +236,6 @@ hist(result, xlab="chi-square statistic", main="Distribution of chi-square stati
 abline(v=obsChisq,col="blue",lty=5)
 chMore<-which(result >= obsChisq)
 pVal<-(length(chMore)+1)/(length(result)+1); pVal # one tailed
+
+
  
