@@ -1,4 +1,4 @@
-# Larson Hogstrom - HW2
+# Larson Hogstrom - HW3
 # MATH_E156 - 2/16/2014
 
 #### Part 1 ###
