@@ -63,10 +63,11 @@ library(actuar)
 help("ppareto")
 # The Pareto distribution with parameters ‘shape’ = a and ‘scale’ =
 # s has density:
-#                     f(x) = a s^a / (x + s)^(a + 1)
+#           f(x) = a s^a / (x + s)^(a + 1)
 
 ppareto(c(.1,.2), shape=2, scale=1)
-
+ppareto(c(.1,.2), shape=2, scale=1)
+curve(dpareto(x, shape=2, scale=1))
 #### Part 3 ###
 
 #     Like Much   Like   Neither   Dislike   Dislike Mutch
