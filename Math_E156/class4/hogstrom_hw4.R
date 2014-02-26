@@ -54,20 +54,85 @@ print("Results from both chi-square tests do not support rejecting the null
 # 18 in interval [1.5,2)
 # 9 in interval [2,3)
 # 10 in interval [3,5)
-# the rest are [5+)
+# 3 in [5+)
 # is it plausable that these numbers were drawn from a distribution with the pdf:
-# f(x) = 2/x^3 for x>=1s
 
+### load distribution
 # install.packages("actuar") #comment this out after the first time
 library(actuar)
-help("ppareto")
+# f(x) = 2/x^3 for x>=1s
 # The Pareto distribution with parameters ‘shape’ = a and ‘scale’ =
 # s has density:
 #           f(x) = a s^a / (x + s)^(a + 1)
 
-ppareto(c(.1,.2), shape=2, scale=1)
-ppareto(c(.1,.2), shape=2, scale=1)
-curve(dpareto(x, shape=2, scale=1))
+### reproduce observed table
+# Obs <- c(30,18,9,10,3)/70
+Obs <- matrix(c(30,18,9,10,3),ncol=5,byrow=TRUE)
+colnames(Obs) <- c("[1,1.5)","[1.5,2)","[2,3)","[3,5)","[5+)")
+rownames(Obs) <- c("counts")
+Obs <- as.table(Obs); Obs
+
+### calculated expected table using integration - Method 1
+curve(2/x^3,from = 1, to = 14)
+integ<-integrate(function(x) {2/x^3}, 1, Inf); integ
+print("The expected function integrates to one between 1 and Inf")
+bin1 <- integrate(function(x) {2/x^3}, 1, 1.5)
+bin2 <- integrate(function(x) {2/x^3}, 1.5, 2)
+bin3 <- integrate(function(x) {2/x^3}, 2, 3)
+bin4 <- integrate(function(x) {2/x^3}, 3, 5)
+bin5 <- integrate(function(x) {2/x^3}, 5, Inf)
+Expected.proportion <- c(bin1$value,bin2$value,bin3$value,bin4$value,bin5$value)
+Expected <- Expected.proportion*70
+
+### observed chi squared - compare observed counts to expected
+obsChisq <- sum((Obs-Expected)^2/Expected); obsChisq
+### permutation
+B <- 10^4-1
+result<-numeric(B)
+for (i in 1:B)
+ {
+    rp <- rpareto(1000, shape=2, scale=1)
+    rpGt1 <- rp[rp >1][1:70]
+    bin1 <- sum(rpGt1 <= 1.5)
+    bin2 <- sum(rpGt1 <= 2 & rpGt1 >=1.5)
+    bin3 <- sum(rpGt1 <= 3 & rpGt1 >=2)
+    bin4 <- sum(rpGt1 <= 5 & rpGt1 >=3)
+    bin5 <- sum(rpGt1 > 5)
+    perm.table <- c(bin1,bin2,bin3,bin4,bin5)
+    result[i] <- sum((perm.table-Expected)^2/Expected) 
+ }
+hist(result, xlab="chi-square statistic", main="Distribution of chi-square statistic")
+abline(v=obsChisq,col="blue",lty=5)
+chMore<-which(result >= obsChisq)
+pVal<-(length(chMore)+1)/(length(result)+1); pVal # one tailed
+
+### calcualte expected table with R function:
+# 1) generate a large set of random values from the expected Pareto distribution
+# 2) see which of these are greater than 1
+# 3) calculuate an expected table using the same bins in the observed counts
+rp <- rpareto(100000, shape=2, scale=1)
+rpGt1 <- rp[rp >1]
+bin1 <- sum(rpGt1 <= 1.5)
+bin2 <- sum(rpGt1 <= 2 & rpGt1 >=1.5)
+bin3 <- sum(rpGt1 <= 3 & rpGt1 >=2)
+bin4 <- sum(rpGt1 <= 5 & rpGt1 >=3)
+bin5 <- sum(rpGt1 > 5)
+Expected.proportion <- c(bin1,bin2,bin3,bin4,bin5)/length(rpGt1)
+Expected <- Expected.proportion*70
+### method 2 
+bin1 <- dpareto(1, shape=2, scale=1) - dpareto(1.5, shape=2, scale=1)
+bin2 <- dpareto(1.5, shape=2, scale=1) - dpareto(2, shape=2, scale=1)
+bin3 <- dpareto(2, shape=2, scale=1) - dpareto(3, shape=2, scale=1)
+bin4 <- dpareto(3, shape=2, scale=1) - dpareto(5, shape=2, scale=1)
+bin5 <- dpareto(2, shape=2, scale=1)
+allbins <- c(bin1,bin2,bin3,bin4,bin5) 
+Expected.proportion <- allbins * (1/sum(allbins))
+Expected <- Expected.proportion*70
+
+
+print("not sure why the ")
+
+
 #### Part 3 ###
 
 #     Like Much   Like   Neither   Dislike   Dislike Mutch
