@@ -75,7 +75,7 @@ Obs <- as.table(Obs); Obs
 ### calculated expected table using integration - Method 1
 curve(2/x^3,from = 1, to = 14)
 integ<-integrate(function(x) {2/x^3}, 1, Inf); integ
-print("The expected function integrates to one between 1 and Inf")
+print("The expected function integrates to 1 between x=1 and x=Inf")
 bin1 <- integrate(function(x) {2/x^3}, 1, 1.5)
 bin2 <- integrate(function(x) {2/x^3}, 1.5, 2)
 bin3 <- integrate(function(x) {2/x^3}, 2, 3)
@@ -107,10 +107,12 @@ chMore<-which(result >= obsChisq)
 pVal<-(length(chMore)+1)/(length(result)+1); pVal # one tailed
 
 ### calcualte expected table with R function:
+# Method 2
 # 1) generate a large set of random values from the expected Pareto distribution
 # 2) see which of these are greater than 1
 # 3) calculuate an expected table using the same bins in the observed counts
 rp <- rpareto(100000, shape=2, scale=1)
+print("Post a question earlier about setting up R's built-in Pareto. Hope I am doing it right here")
 rpGt1 <- rp[rp >1]
 bin1 <- sum(rpGt1 <= 1.5)
 bin2 <- sum(rpGt1 <= 2 & rpGt1 >=1.5)
@@ -119,22 +121,18 @@ bin4 <- sum(rpGt1 <= 5 & rpGt1 >=3)
 bin5 <- sum(rpGt1 > 5)
 Expected.proportion <- c(bin1,bin2,bin3,bin4,bin5)/length(rpGt1)
 Expected <- Expected.proportion*70
-### method 2 
+### method 3 - using the density function
 bin1 <- dpareto(1, shape=2, scale=1) - dpareto(1.5, shape=2, scale=1)
 bin2 <- dpareto(1.5, shape=2, scale=1) - dpareto(2, shape=2, scale=1)
 bin3 <- dpareto(2, shape=2, scale=1) - dpareto(3, shape=2, scale=1)
 bin4 <- dpareto(3, shape=2, scale=1) - dpareto(5, shape=2, scale=1)
 bin5 <- dpareto(2, shape=2, scale=1)
 allbins <- c(bin1,bin2,bin3,bin4,bin5) 
-Expected.proportion <- allbins * (1/sum(allbins))
+Expected.proportion <- allbins * (1/sum(allbins)) # normalize so all bins sum to 1
 Expected <- Expected.proportion*70
-
-
-print("not sure why the ")
-
+print("not sure why the expected counts are a bit different here compared to above")
 
 #### Part 3 ###
-
 #     Like Much   Like   Neither   Dislike   Dislike Mutch
 # B     180       260    137       96        52 
 # G     210       266    145       85        49 
