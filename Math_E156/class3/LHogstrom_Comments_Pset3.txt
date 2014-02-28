@@ -1,0 +1,41 @@
+Score: 47/50
+
+Great pset! Just be careful to doublecheck exactly what we're asking for.
+
+Problem 1.
+
+a) These histograms are wicked hard to read- try playing around with  plot.ecdf() for this kind of thing
+
+b) I'd be careful about exactly what probability you're looking at. You want cases that are more extreme than the one you saw- 
+in this case, I believe that means cases where result <= homefield....I'm going to play with this one a bit and hopefully once I post answers it will shed some light
+
+ 
+Problem 2.
+
+Line 52 -- exactly. Specifically, the expected value in adult-bottom is <5
+
+This looks great
+
+Problem 3.
+
+a) Very well done (you're one of the few people who interpreted this the way the book meant)
+
+b) Again, nicely done
+
+One note: when you're doing two-sided tests, you can really only assert that difference differs from 0 (or...whatever your alternative hypothesis is)
+Which seems silly in cases like this, but by the nature of two-sided tests you're looking at both tails of the test-statistic's distribution. 
+This is why it's sometimes (politically speaking) considered "cheating" to run a one-way test if you don't have a specific reason to believe your alternative hypothesis is directional in a particular way.
+Having said that....the one-way test here is clearly significant, and the direction is obvious. 
+
+Problem 4.
+
+a) This approach is good, but you're looking at 5 or more wins as opposed to 4 or more (see definition, in the instructions, of "finishing strong")
+b) we wanted you to use the hypergeometric rather than multinomial here
+
+c) Looks great
+
+d) Once again, this works perfectly if you're looking for 5+ wins
+
+Problem 5.
+
+Looks good
