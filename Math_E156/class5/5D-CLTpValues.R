@@ -1,6 +1,4 @@
-Math E-156 Script 5D-CLTpValues.R
-
-
+# Math E-156 Script 5D-CLTpValues.R
 #Topic 1 -- using the central limit theorem to estimate probabilities
 
 #The central limit theorem says that for large enough samples the distribution of the sum or mean is approxiamtely normal
