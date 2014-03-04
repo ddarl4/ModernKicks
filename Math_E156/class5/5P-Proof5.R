@@ -46,7 +46,7 @@ curve (mgf2, from = -1, to = 1, col = "red", add = TRUE)
 Y3 <- c(-4, -2, 2, 4); pr <-c(0.25, 0.25, 0.25, 0.25); mgf3 <- Vectorize(function(x) mgf(x, Y3, pr))
 curve (mgf3, from = -1, to = 1, col = "blue", lty = 2, add = TRUE)
 
-Alternatively we can multiply the mgfs
+# Alternatively we can multiply the mgfs
 mgfPlot <- function(x) mgf1(x)*mgf2(x)
 curve (mgfPlot, from = -1, to = 1, col = "blue", lty = 1, add = TRUE)
 

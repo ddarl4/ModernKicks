@@ -112,10 +112,29 @@ curve(dexp(x, rate=7*25),col = "red", add=TRUE)
 # then write an R function for the moment generating function of this prob- 
 # ability mass function and plot a graph of it. (See script 5P for the 
 # “vectorize” trick.)
+Y <-outer(c(1,2,3,4,5,6),c(1,2,3,4,5,6),"+"); Y
+p <- 1/6
+pr <- outer(rep(p,6),rep(p,6),"*"); pr
 
+mgf <- function(x, Y, pr)  {
+  sum(pr*(exp(x*Y)))
+}
+mgf.dice <- Vectorize(function(x) mgf(x, Y, pr))
+curve (mgf.dice, from = -1, to = 1, col = "magenta", lty = 2)
 
 # (b) Write an R function for the moment generating function of the prob- 
 # ability mass function for a single die and plot a graph of its square.
+Y <-c(1,2,3,4,5,6); Y
+p <- 1/6
+pr <- rep(p,6); pr
+
+mgf_squared <- function(x, Y, pr)  {
+  sum(pr*(exp(x*Y)))^2
+}
+mgfsq.dice <- Vectorize(function(x) mgf_squared(x, Y, pr))
+curve (mgfsq.dice, from = -1, to = 1, col = "blue", lty = 2)
+
+
 
 
 
