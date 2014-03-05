@@ -4,7 +4,7 @@
 #### Part 1 ###
 # 1. Page 93, exercise 10.
 # in 2000 census 28.6% of adults have high school diploma
-# In a random sample of 800 adults, what is the prob that betweeen 220
+# In a random sample of 800 adults, what is the prob. that betweeen 220
 # and 230 (inclusive) people have a HS diploma.
 n<-800
 p<-.286
@@ -16,6 +16,7 @@ clt <- diff(dist1); clt
 # compare to the exact probability (use pbinorm in R)
 dist2 <- pbinom(c(220,230),size=800,prob=.286)
 exact <- diff(dist2); exact
+print('there is good agreement beetween the CLT and exact probability')
 
 #### Part 2 ###
 # 2. Page 93, exercise 14. This is a twin of exercise 13, one of the section problems.
@@ -25,6 +26,7 @@ exact <- diff(dist2); exact
 
 # a) Give the exact sampling distribution of W
 sampling_stdv = sqrt(3^2/9+5^2/12); sampling_stdv
+sampling_mean = 7+ 10; sampling_mean
 print('W = X_bar + Y_bar ~ N(17,1.75^2)')
 
 # b) Simulate the sampling distribution of W in R and plot your results
@@ -37,8 +39,8 @@ for (i in 1:10000) {
     W[i] <- mean(x) + mean(y)
 }
 hist(W, freq = FALSE)
+curve(dnorm(x, mean=sampling_mean, sd=sampling_stdv),from =0, to = 30, col = "red", add=TRUE)
 # theoretical mean and standard error
-curve(dnorm(x, mean=17, sd=1.75),from =0, to = 30, col = "red", add=TRUE)
 simMean <- mean(W); simMean
 simSE <- sqrt(var(W)); simSE
 print('simulated mean and SE are close to the theoretical')
@@ -60,7 +62,7 @@ p.theoretical <- pnorm(-1.5,mean=17, sd=1.75); p.theoretical
 # Compute the expected value and varaince of X + Y 
 # let W = X + Y
 w.mean <- (40+60)/2 + (45+80)/2; w.mean
-w.var <- (60-40)^2/12 + (80-45)^2/12
+w.var <- (60-40)^2/12 + (80-45)^2/12; w.var
 
 # b) compare simmulated distribution of X and Y and compare to the 
 # theoretical mean and variance
@@ -120,7 +122,7 @@ mgf <- function(x, Y, pr)  {
   sum(pr*(exp(x*Y)))
 }
 mgf.dice <- Vectorize(function(x) mgf(x, Y, pr))
-curve (mgf.dice, from = -1, to = 1, col = "magenta", lty = 2)
+curve (mgf.dice, from = -1, to = 1, col = "magenta", lty = 1)
 
 # (b) Write an R function for the moment generating function of the prob- 
 # ability mass function for a single die and plot a graph of its square.
@@ -132,9 +134,5 @@ mgf_squared <- function(x, Y, pr)  {
   sum(pr*(exp(x*Y)))^2
 }
 mgfsq.dice <- Vectorize(function(x) mgf_squared(x, Y, pr))
-curve (mgfsq.dice, from = -1, to = 1, col = "blue", lty = 2)
-
-
-
-
+curve (mgfsq.dice, from = -1, to = 1, col = "blue", lty = 2, add=TRUE)
 
