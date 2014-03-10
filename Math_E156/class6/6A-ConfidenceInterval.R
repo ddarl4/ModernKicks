@@ -1,4 +1,4 @@
-Math E-156 Script 6A-ConfidenceInterval.R
+# Math E-156 Script 6A-ConfidenceInterval.R
 
 #This topic is explained very well in section 7.1.1, after it has been used in Chapter 5.
 #We apply it to examples 5.1 and 5.2 from the textbook
@@ -22,7 +22,9 @@ for (i in 1:1000) {
   if(i <= 100) points(U, i, pch= 23)
 }
 abline (v = 23, col = "red") #vertical line at true mean
+# abline (v = 23+X.add, col = "red") #vertical line at true mean
 counter/1000 #what fraction of the time did our statistic U exceed the true mean?
+
 
 #Now do the same thing on the low end
 #We will subtract x.sub so that x.bar - x.sub will be less than the true mean 97.5% of the time.
