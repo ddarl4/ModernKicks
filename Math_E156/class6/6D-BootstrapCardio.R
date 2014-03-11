@@ -32,7 +32,7 @@ sample1 <-sample(highBP,n1, replace = TRUE); head(sample1)
 sample2 <-sample(lowBP,n2, replace = TRUE)
 risk1 <- mean(sample1 == "Die"); risk1
 risk2 <- mean(sample2 == "Die"); risk2
-risk1/risk2; ratio for bootstrapping
+risk1/risk2; #ratio for bootstrapping
 
 #This analysis could also be done using rbinom()
 #Now do the bootstrapping.
