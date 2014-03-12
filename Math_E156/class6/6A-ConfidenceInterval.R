@@ -82,6 +82,18 @@ X.add <- 2-qgamma(0.025,shape = 16,rate = 8); X.add
 #Calculate an amount X.sub to subtract from the sample mean
 X.sub <- qgamma(0.975,shape = 16,rate = 8)-2; X.sub
 
+#### NOTE FROM FORUMN ####
+# If you add 16 gamma distributions of shape 1 and rate (lambda) 1/2, 
+# you'd indeed have a sum that was a gamma distribution of shape 16 
+# and rate 1/2.  Theorem B.11
+ 
+# When you are finding the average lifetime of 16 gamma distributions of 
+# shape 1 and rate 1/2 you first sum the independent gammas with shape 1 
+# and rate 1/2 to get a gamma with shape 16 and rate 1/2, and then multiply
+#  that resulting distribution function by 1/16 to find the mean of the 
+#  sum, which causes rate, to increase by a factor of 16.  Proposition B.3.
+####
+
 #Again we can generate some confidence intervals
 counter.low <- 0; counter.high <- 0;
 plot(x =c(0,5), y = c(1,100), type = "n", xlab = "", ylab = "") #blank plot
