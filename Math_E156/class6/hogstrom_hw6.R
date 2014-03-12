@@ -43,13 +43,13 @@ ciLow.days <- ciLow *28; ciLow.days
 
 # replicate your results by using a bootstrap percentile confidence 
 # interval from a single sample.
-curve(dgamma(x, 1, 1), from = 0, to = 10) #exponential with lambda = 1/2
-my.sample <- rgamma(20, 1, 1)    #draw 16 samples from this population
-mean(my.sample) #expected mean is 2 but will vary widely
+curve(dgamma(x, 1, 1), from = 0, to = 10) 
+my.sample <- rgamma(20, 1, 1)    #draw 20 samples from this population
+mean(my.sample) 
 hist(my.sample,  breaks= "FD", probability = TRUE)
 abline(v = mean(my.sample), col = "blue", lty = 2)
 curve(dgamma(x, 1, 1), col = "red", add = T)
-abline(v = 1, col = "red", lty = 2)   #population mean is 2
+abline(v = 1, col = "red", lty = 2)  
 
 #Now compare the bootstrap and sampling distributions
 N=10^5; my.boot<-numeric(N)
@@ -68,7 +68,7 @@ abline(v = CI[2], col = "blue")
 print(paste("Pet Warning: There is a 95% percent chance that the mean age
     of 20 “Mortal cyberpets” lies between ",round(ciLow.days,3), " and ",
     round(ciUp.days,3), "days. There is stiil a 5% chance that the true
-    expected lifetime will lie outside this interval."))\
+    expected lifetime will lie outside this interval."))
 
 ### Part 2 
 # p.132 - #12
@@ -97,7 +97,7 @@ bootSE <- sqrt(var(m.mean)); bootSE
 hist(m.mean, breaks= "FD",main = ("Bootstrap distribution of means"), probability = TRUE)
 quantile(m.mean, c(.025, .975)) #not symmetric about the mean
 bootlow <- quantile(m.mean, .025); boothigh <- quantile(m.mean, .975);
-abline(v = bootlow, col = "red", lty = 2); abline(v = boothigh, col = "blue", lty = 2)
+abline(v = bootlow, col = "blue", lty = 2); abline(v = boothigh, col = "blue", lty = 2)
 
 # c) Remove the ouutlier and bootstrap the mean of the remaining data. record
 # the bootstrap standard error and the 95% bootstrap interval.
@@ -115,11 +115,11 @@ hist(drop.mean, breaks= "FD",main = ("Bootstrap distribution of means"), probabi
 quantile(drop.mean, c(.025, .975)) #not symmetric about the mean
 bootlow <- quantile(drop.mean, .025); boothigh <- quantile(drop.mean, .975);
 abline(v = bootlow, col = "red", lty = 2); abline(v = boothigh, col = "blue", lty = 2)
+bootSE # origonal SE
+bootSE.drop # outlier removed
 
 # d) what effect did removing the outlier have on the bootstrap distribution,
 # in particular, the standard error?
-bootSE # origonal SE
-bootSE.drop # outlier removed
 print('removing the outlier reduced the variance of the bootstraped distribution')
 
 ### Part 3
@@ -164,15 +164,6 @@ print('both bootstraped distributions are roughly normal
 
 # c) Bootstrap the ratio of means. Provide plots of the bootstrap distributionand 
 # describe the distribution.
-N <- 10^4; ratio <- numeric(N); prop1 <-numeric(N); prop2 <- numeric(N)
-for (i in 1:N) {
-  sample1 <-sample(highBP,n1, replace = TRUE)
-  sample2 <-sample(lowBP,n2, replace = TRUE)
-  prop1[i] <- mean(sample1 == "Die")
-  prop2[i] <- mean(sample2 == "Die")
-  ratio[i] <-prop1[i]/prop2[i]
-}
-
 N<-10^4; 
 MS.mean <- numeric(N)
 SS.mean <- numeric(N)
@@ -227,7 +218,7 @@ for (i in 1:N) {
   prop2[i] <- mean(sample2 == "not_grad")
   ratio[i] <-prop1[i]/prop2[i]
 }
-hist(ratio, xlab = "Relative Risk of Not Graduating")  #Figure 5.16
+hist(ratio, xlab = "Relative Risk of Not Graduating") 
 abline(v = mean(ratio), col = "red")
 abline(v = relative.dropout, col = "blue")
 bias <- mean(ratio) - relative.dropout; bias  #close to the number on page 123
@@ -236,3 +227,4 @@ stderr <- sd(ratio); stderr
 CI = quantile(ratio, c(0.025, 0.975)); CI
 abline(v = CI[1], col = "green")
 abline(v = CI[2], col = "green")
+print('1997 Men enrolled at Harvard likely had higher dropout rates than women')
