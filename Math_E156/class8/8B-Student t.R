@@ -1,4 +1,4 @@
-8- Student t
+# 8- Student t
 #Sum of two standard normal random variables
 N<-10000; means <-numeric(N); vars<-numeric(N); i <-1
 for (i in 1:N) {
@@ -107,7 +107,8 @@ hist(means, breaks = "FD",probability = TRUE)
 curve(dnorm(x,0,1/sqrt(k)), col = "red", add = TRUE)#a poor match
 #What about the sample variance?
 mean(vars) # 1: it is an unbiased estimator of the variance
-hist((k-1)*vars, xlim = c(0,10*sqrt(k)), breaks= "FD", probability = TRUE)
+# hist((k-1)*vars, xlim = c(0,10*sqrt(k)), breaks= "FD", probability = TRUE)
+hist((k-1)*vars, breaks= "FD", probability = TRUE)
 curve(dchisq(x,k), col = "red", add = TRUE) #no longer chi square
 cor(means,vars) #mean and smaple variance are no longer independent!
 #Suppose that we know the mean is zero, but we do not know the standard devaiation

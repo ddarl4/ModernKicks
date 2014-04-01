@@ -1,9 +1,10 @@
 #Math E-156 Script 7B-EstimationMoments.R
 
 #Topic 1 - choosing one parameter to make the theoretical mean match the sample mean
-#Based on section 6.2, pages 146-148 of the textbook
-#This technique requires knowing the theoretical moments of varous distributions, tabulated on pp. 396-399
-#The number of sample moments must equal the number of parameters
+# Based on section 6.2, pages 146-148 of the textbook
+# This technique requires knowing the theoretical moments of varous 
+# distributions, tabulated on pp. 396-399
+# The number of sample moments must equal the number of parameters
 
 #Example 6.8 uses a uniform distribution
 #Generate 20 samples from a uniform distribution on [0, 8]
