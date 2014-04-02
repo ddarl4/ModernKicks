@@ -144,32 +144,29 @@ curve(pgamma(x, 2.81, scale=.247), add=TRUE, col="blue",lwd=2)
 
 # (a) Find the MLE of θ if it is not required to be an integer.
 obs <- c(0.855, 0.891, 0.913, 0.989, 0.943)
-
-L<- function(beta) 1/beta^4
-
-#Example 6.4 - a uniform distribution on [0, beta]
-#we have observed samples 1.2, 3.3, 4.5, and 5.0
-#If beta < 5.0, the likelihood of observing these samples is zero
-#Otherwise the density function is 1/beta and
-L<- function(beta) 1/beta^4
-curve(L(x), from = 5, to = 7)
-optimize(L, c(5,7), maximum = TRUE) 
-#So the MLE estimator of beta is just the largest sample
-#There is clearly a problem with this estimator.
-beta<-5; N <- 1000; beta.hats <-numeric(N)
-for (i in 1:N) {
-  x <- runif(4,max = beta)
-  beta.hats[i] <- max(x)
-}
-hist(beta.hats,breaks = "FD")
-mean(beta.hats)   #should be very close to 4.
-#We can "unbias" this estimator by multiplying it by 5/4
-
+# page 140 shows that θ.hat = -n/(sum(ln(Xi)))
+n <- length(obs)
+theta.hat <- -n/sum(log(obs)); theta.hat
 
 # (b) Find the method of moments estimate of θ.
+# mean of obs = integral(x*f(x;θ))
+integ<-integrate(function(x) {2/x^3}, 1, Inf); integ
 
-# (c) Find the MLE estimate of θ, requiring it to be an integer. Just have R crank out the likelihood of the given results for θ = 1,2,3,··· ,N choosing N large enough that you are sure that you have found the maximum.
-# 10
+# (c) Find the MLE estimate of θ, requiring it to be an integer. Just 
+# have R crank out the likelihood of the given results for θ = 1,2,3,··· ,N 
+# choosing N large enough that you are sure that you have found the maximum.
+likelihood.theta <- function(theta, data)
+{
+  n<- length(data)
+  theta^n * prod( data^(theta-1) )
+}
+
+N <- 20; likelihood.vals <- numeric(N)
+for (i in 1:N) {
+  likelihood.vals[i] <- likelihood.theta(i,obs)
+}
+plot(likelihood.vals)
+print("likelihood values peak between theta of 11 and 12. This is consistent with MLE estimate")
 
 ### part 4 ###
 
@@ -177,13 +174,12 @@ mean(beta.hats)   #should be very close to 4.
 # of Exercise 37 on page 164. By doing the sampling N times, you can get 
 # an excellent estimate of the expectation of each of the two estimates.
 
-
 # 37 let X1, x2,...,Xn be independent exponential random variables with
 # parameter λ. Let X_bar = (X1 + X2)/2 be an estimator of 1/λ
 
 # a) show that X_bar is an unbiased estimator of 1/λ
 n = 10
-lambda <- 3
+lambda <- 12
 x <- rexp(n, lambda)
 lambda.hat <-1/mean(x); lambda.hat   #estimate of lambda for which the mean matches the sample mean
 #Try this 1000 times to see how it does
@@ -197,20 +193,13 @@ for (i in 1:N) {
 hist(x.bars)
 # plot line for 1/λ
 abline(v = 1/lambda, col = "red")
-
-# mean(means)   #theoretical value is 0.5
-# median(means) #for an exponential distribution the median is less than the mean -- persists in the sampling distribution
-# #In general, E[1/X] does not equal 1/E[X], and that is the case here.
-# mean(lambdas)  #theoretical value is not 2, alas
-# hist(lambdas)
-# abline(v = mean(lambdas), col = "red")
-# mean(lambdas > 2)  #comes out too large more than half the time
+bias <- mean(x.bars) - (1/lambda); bias
 
 # b) show that Var[X_bar] = 1/(2λ^2)
 var(x.bars)
 1/(2*lambda)^2
-
-mean(lambda.bars)
+bias2 <- var(x.bars) - 1/(2*lambda)^2; bias2
+print("Var[X_bar] seems to be a less biased estimator of 1/(2λ^2) at higher values of lambda")
 
 ### part 5 ###
 # The Pareto distribution with shape 1 and scale s has density function 
@@ -224,19 +213,76 @@ library(actuar)
 x <- rpareto(10, 1 , 2); x
 # will draw a sample of size 10 from a Pareto distribution with shape 1 
 # and scale 2.
+
 # (a) Investigate the behavior of sample means for samples of various 
 # sizes drawn from this distribution, and do a plot like the one for the 
 # Cauchy distribution in script 7D to show that the sample means are not 
 # a consistent estimator of anything.
+plot(1, xlim= c(200, 20000), ylim = c(0, 100), log = "x", type = "n")
+N = 1000;  epsilon = 0.05
+for (n in c(250, 500, 1000, 2000, 5000, 10000, 20000)){
+  means = numeric(N);
+  for (i in 1:N){
+    x <- rpareto(n,1, 2)
+    means[i] = mean(x)
+  }
+  points( rep(n, N), means)
+}
 
 # (b) Make a histogram of sample medians for samples of size 10 from the 
 # Pareto distribution with shape 1, scale 2.
+N = 10000;
+  medians = numeric(N);
+  for (i in 1:N){
+    x <- rpareto(10,1, 2)
+    medians[i] = median(x)
+  }
+hist(medians)
 
 # (c) Invent a consistent estimator of the parameters and show that 
 # it works by creating a graphic like figure 6.7 in the textbook, 
 # where you display the result of taking the median of larger and 
 # larger samples.
 
+# calculate estimator with median
+plot(1, xlim= c(200, 20000), ylim = c(0, 5), log = "x", type = "n")
+epsilon <- .2
+abline(h = c(s.true + epsilon, s.true- epsilon), col = "red")
+N = 1000;  
+for (n in c(250, 500, 1000, 2000, 5000, 10000, 20000)){
+  medians = numeric(N);
+  for (i in 1:N){
+    x <- rpareto(n,1, s.true)
+    medians[i] <- median(x)
+  }
+  points( rep(n, N), medians)
+}
+
+print("An alternative is to use the given pareto pdf with shape=1 to create 
+a MLE estimator of s. To do this I took the derivative of the log-likelihood 
+w.r.t s. I set this equal to zero and obtained: 0= n/s - 2*sum(1/(s+Xi)). 
+This can be solved numerically to find an consistent estimator of s.")
+
+pareto.s <- function(s, data)
+{
+  n <- length(data)
+  n/s - 2*sum(1/(s+data))
+}
+s.true <- 3 # set parameter to estimate
+# 
+plot(1, xlim= c(200, 20000), ylim = c(0, 5), log = "x", type = "n")
+epsilon <- .2
+abline(h = c(s.true + epsilon, s.true- epsilon), col = "red")
+N = 1000;  
+for (n in c(250, 500, 1000, 2000, 5000, 10000, 20000)){
+  estimates = numeric(N);
+  for (i in 1:N){
+    x <- rpareto(n,1, s.true)
+    est <- uniroot(pareto.s, data = x, lower = 1,upper = 5)
+    estimates[i] <- est$root
+  }
+  points( rep(n, N), estimates)
+}
 # Note: to do this problem you are going to have to work out the 
 # distribution function for the Pareto distrbution, attempt to 
 # calculate its expectation, and figure out its median. An R script 
