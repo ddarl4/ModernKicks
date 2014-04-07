@@ -36,8 +36,6 @@ weibull.scale <- function(k, data)
 # and a guess of values two values around root.
 # Function values must be opposite signs at lower
 # and upper guess.
-
-#Now, we do the data specific commands
 Quakes <- read.csv("Quakes.csv"); head(Quakes)
 td <- Quakes$TimeDiff
 hist(td)
@@ -63,6 +61,7 @@ curve(pweibull(x, 0.9172, 17.34), add=TRUE, col="blue",lwd=2)
 library(stats4)
 MLL <-function(shape, scale) -sum(dweibull(td, shape, scale, log = TRUE))
 mle(MLL,start = list(shape = 1, scale = 15)) 
+print("Manual and built-in MLE parameter estimates are comparable")
 # Include the graphs that are requested, but do not take the time to 
 # replicate the goodness-of-fit analysis, since that shows up in the 
 # next problem.
@@ -81,24 +80,19 @@ st <- Service$Times # waiting times in minutes
 
 # a) Use the method of moments to estimate the parameters of the 
 # gamma distribution
-
-# E[X] = shape*scale
-# Var[X] = shape*scale^2
-#Calculating the first two moments from the sample is easy
 M1 = mean(st); M1
 M2 = mean(st^2); M2
 
-#For an exponential distribution the variance is 1/lambda^2 (page 397)
 variance <- M2 - M1^2  #this sample variance is independent of delta
-# shape.bar <- M1/shape
-scale.bar <- M1/shape
-shape.bar <- variance/scale^2
+# for the gamma distribution:
+# E[X] = shape*scale
+# Var[X] = shape*scale^2
 
-lambda.bar = 1/sqrt(variance); lambda.bar  #estimate of lambda based just on the sample variance
-#If delta = 0, then the mean and standard deviation are equal, so
-delta.bar = M1 - sqrt(variance); delta.bar #estimate of delta based on both sample moments
-    
-
+# using substitution we can re-write 
+shape.bar <- M1^2/variance; shape.bar
+scale.bar <- M1/shape.bar; scale.bar
+hist(st, prob=TRUE, main = "MLE estimate of gamma distribution")
+curve(dgamma(x, shape.bar, scale=scale.bar), add=TRUE, col="blue",lwd=2)
 
 ### compare with mle estimate
 library(stats4)
@@ -106,6 +100,8 @@ MLL <-function(shape, scale) -sum(dgamma(st, shape=shape, scale=scale, log = TRU
 mle(MLL,start = list(shape = 1, scale = 1)) 
 hist(st, prob=TRUE, main = "MLE estimate of gamma distribution")
 curve(dgamma(x, 2.81, scale=.247), add=TRUE, col="blue",lwd=2)
+
+print("method of moments and MLE estimates are comparable")
 
 # b) Use a goodness-of-fit test to see whether the gamma distribution is an
 # adequate model for these data.
@@ -127,8 +123,7 @@ print("Conclusion: the gamma distribution, with estimated parameters, could have
 # c) Make histogram and ecdf of the data with the gamma dist. superimposed
 dev.new()
 plot.ecdf(st,main = "ECDF of Service Times")
-curve(pgamma(x, 2.81, scale=.247), add=TRUE, col="blue",lwd=2)
-
+curve(pgamma(x, shape.bar, scale=scale.bar), add=TRUE, col="blue",lwd=2)
 
 ### Part 3 ### 
 # Karl is applying for membership in the Stats Guild. He is required 
@@ -147,20 +142,30 @@ obs <- c(0.855, 0.891, 0.913, 0.989, 0.943)
 # page 140 shows that θ.hat = -n/(sum(ln(Xi)))
 n <- length(obs)
 theta.hat <- -n/sum(log(obs)); theta.hat
-
+    
 # (b) Find the method of moments estimate of θ.
+
 # mean of obs = integral(x*f(x;θ))
-integ<-integrate(function(x) {2/x^3}, 1, Inf); integ
+# for this function we expect: mean(obs) = integral(θx^θ) from x=0 to 1
+my.t<-Vectorize(function(t) integrate(function(x) t*x^(t), 0, 1)$val)
+test.thetas <- my.t(c(1:20))  
+plot(test.thetas, main='theta estimate using method of moments',xlab="test theta")
+# draw red line at mean of observed
+abline(h = mean(obs), col = "red")
+print("we can see that the theta function crosses the red line at a theta value between
+    10 and 12. This is consistent with the MLE estimate ")
 
 # (c) Find the MLE estimate of θ, requiring it to be an integer. Just 
 # have R crank out the likelihood of the given results for θ = 1,2,3,··· ,N 
 # choosing N large enough that you are sure that you have found the maximum.
+
+# define likelihood function
 likelihood.theta <- function(theta, data)
 {
   n<- length(data)
   theta^n * prod( data^(theta-1) )
 }
-
+# simulate with different values of theta
 N <- 20; likelihood.vals <- numeric(N)
 for (i in 1:N) {
   likelihood.vals[i] <- likelihood.theta(i,obs)
@@ -200,6 +205,17 @@ var(x.bars)
 1/(2*lambda)^2
 bias2 <- var(x.bars) - 1/(2*lambda)^2; bias2
 print("Var[X_bar] seems to be a less biased estimator of 1/(2λ^2) at higher values of lambda")
+
+# d compute the bias of the estimator (X1*X2)^1/2 = 1/λ
+N <- 100000; est.root <- numeric(N)
+for (i in 1:N) {
+  x <- rexp(n, lambda)
+  est.root[i] <- sqrt(x[1]*x[2])
+}
+hist(est.root)
+abline(v = 1/lambda, col = "red")
+bias <- mean(x.bars) - (1/lambda); bias
+print("(X1*X2)^1/2 seems to be a good estimator of 1/λ")
 
 ### part 5 ###
 # The Pareto distribution with shape 1 and scale s has density function 
@@ -244,8 +260,9 @@ hist(medians)
 # where you display the result of taking the median of larger and 
 # larger samples.
 
-# calculate estimator with median
+# calculate the median as an estimator of s 
 plot(1, xlim= c(200, 20000), ylim = c(0, 5), log = "x", type = "n")
+s.true <- 3
 epsilon <- .2
 abline(h = c(s.true + epsilon, s.true- epsilon), col = "red")
 N = 1000;  
@@ -260,7 +277,7 @@ for (n in c(250, 500, 1000, 2000, 5000, 10000, 20000)){
 
 print("An alternative is to use the given pareto pdf with shape=1 to create 
 a MLE estimator of s. To do this I took the derivative of the log-likelihood 
-w.r.t s. I set this equal to zero and obtained: 0= n/s - 2*sum(1/(s+Xi)). 
+w.r.t the parameter s. I set this equal to zero and obtained: 0= n/s - 2*sum(1/(s+Xi)). 
 This can be solved numerically to find an consistent estimator of s.")
 
 pareto.s <- function(s, data)
