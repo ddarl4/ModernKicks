@@ -108,8 +108,8 @@ N <- 10^4; sumsquares <- numeric(N); k <- 6
 for (i in 1:N) {
   x <- rnorm(k)
   sumsquares[i] <- sum(x^2)
-}
+}curve(dchisq(x,k), col = "red", add = TRUE)
 hist(sumsquares, xlim = c(0,4*k),breaks = "fd", freq = FALSE)
 #We get a chi square distribution with k degrees of freedom
-curve(dchisq(x,k), col = "red", add = TRUE)
+
 
