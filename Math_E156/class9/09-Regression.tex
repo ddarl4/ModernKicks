@@ -1,0 +1,244 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=R,basicstyle=\scriptsize\ttfamily,commentstyle=\ttfamily\color{gray},frame=single,breaklines=true,keepspaces = true,keywordstyle=\color{red},xleftmargin=-10mm}
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+MATHEMATICS E-156, SPRING 2014 \\
+MATHEMATICAL FOUNDATIONS OF STATISTICAL SOFTWARE
+
+\smallskip
+
+Module \#9 (Linear and Logistic Regression)
+\end{center}
+
+Last modified: April 9, 2014
+
+\medskip
+
+\paragraph*{Reading from Chihara and Hesterberg}
+
+\begin{itemize}
+\item Chapter 9. This chapter is full of ideas that might fit well into a final project. We will return to Chapters 7 and 8 later.
+
+You may ignore the details of sections 9.4.1, 9.4.2 (except for example 9.8), 9.5.2, and 9.6.1.
+
+\end{itemize}
+
+
+\paragraph*{Proof of the Week}
+\begin{itemize}
+\item None -- we did it last week!
+\end{itemize}
+
+\pagebreak
+
+
+\paragraph*{R scripts}
+\begin{itemize}
+\item Script 9A-LinearRegression.R\\
+Topic 1 - Covariance and correlation for two random variables.\\
+Topic 2 - Least-squares regression for two random variables.\\
+Topic 3 - a maximum-likelihood approach\\
+Topic 4 - checking the MLE approach when the residuals really have a normal distribution.
+
+\item Script 9B-ResamplingRegression.R\\
+Topic 1 - getting a confidence interval for regression coefficients.\\
+Topic 2 - applying the bootstrap to linear regression.\\
+Topic 3 - Permutation test for lack of independence.
+
+\item Script 9C-Logistic regression.R\\
+Topic 1 - doing linear regression when the response is always zero or one.\\
+Topic 2 - a maximum likelihood approach.\\
+Topic 3 - logistic regression.
+
+\end{itemize}
+
+\pagebreak
+
+
+
+
+
+\paragraph*{Mathematical notes}
+
+
+
+\begin{enumerate}
+
+\item Covariance and correlation
+
+\begin{enumerate}
+\item The covariance of random variables $X$ and $Y$ is defined as\\ Cov$[X,Y] = E[(X - \mu_X)(Y- \mu_Y)]$
+
+Prove that Cov$[X,Y] = E[XY] -  E[X]E[Y].$
+
+\vspace{100pt}
+
+\item The correlation coefficient of random variables $X$ and $Y$ is defined as 
+$$\rho(X, Y) = \frac {\text{ Cov}[X,Y]}{\sigma_X \sigma_Y}.$$
+
+Prove that $|\rho(X,Y)| \leq 1.$
+
+\vspace{100pt}
+
+
+\item Prove that when calculating the sample correlation $r$, you can divide $\sum(x_i - \overline{x})(y_i - \overline{y})$ by $n, n-1$, or 1 in the numerator, as long as you do the same thing in the denominator.
+
+\end{enumerate}
+
+\pagebreak
+
+\item Least-squares regression
+
+You have values $x_i$ of a ``predictor'' and matching values $y_i$ of a ``response.'' Your goal is to minimize the sum of squares of the prediction errors,
+$$g(a,b) = \sum_{i=1}^n( a + b x_i - y_i)^2.$$
+
+Prove that 
+$$b = \frac{\sum_{i=1}^n(x_i - \overline{x})(y_i - \overline{y})} {\sum_{i=1}^n(x_i - \overline{x})^2}, a =\overline{y} - b \overline{x}.$$
+
+\pagebreak
+
+\item The connection between correlation and the slope of the regression line.
+$$\text{Define }ss_{xy} = \sum_{i=1}^n(y_i - \overline{y})(x_i - \overline{x}); ss_x = \sum_{i=1}^n(x_i - \overline{x})^2; ss_y = \sum_{i=1}^n(y_i - \overline{y})^2.$$
+Prove that $r^2  ss_y = b^2 ss_x.$
+\vspace{80pt}
+
+An observation is $y_i$; a predicted observation is $\hat{y}_i = a + b x_i; \overline{y} = a + b\overline{x}$. Prove that the ratio of the variance of the predicted $y$'s to the variance of the observed $y$'s equals R-squared, the square of the sample correlation $r$.
+
+\vspace{160pt}
+
+Prove that the ratio of the variance of the residuals $y - \hat{y}$ to the variance of the observed $y$'s equals $1-r^2$.
+
+
+\pagebreak
+
+
+\item Maximum likelihood regression
+
+You have a fixed set of values, $x_i$, of a ``predictor'' variable.
+
+For each $x_i$, the response $Y_i$ is a random variable whose expectation is $\mu_i = \alpha + \beta x_i$ and whose variance is $\sigma^2$. The residuals $Y_i-\mu_i$ are independent.
+
+Given a set of pairs of values $(x_1, Y_1), (x_1, Y_1), \cdots (x_n, Y_n)$, prove that the maximum-likelihood estimates of $\alpha$ and $\beta$ are
+$$\hat{\beta} = \frac{\sum_{i=1}^n(x_i - \overline{x})(Y_i - \overline{Y})} {\sum_{i=1}^n(x_i - \overline{x})^2}, \hat{ \alpha} =\overline{Y} - \hat{\beta} \overline{x}.$$
+$$\text{while } \hat{\sigma}^2 = \frac{1}{n} \sum_{i-1}^n(Y_i - \hat{\alpha} - \hat{\beta}x_i)^2\text{ (note: divide by } n-2 \text{ for an unbiased estimator)}.$$
+
+\pagebreak
+
+
+\item Logistic regression
+
+You have a fixed set of values, $x_i$, of a ``predictor'' variable. Each ``response'' variable $Y_i$ is a Bernoulli random variable with parameter $p_i.$
+
+Assume that $$p_i = \frac{e^{\alpha + \beta x_i}}{1 + e^{\alpha + \beta x_i}}.$$
+
+\begin{enumerate}
+
+\item Prove that $\alpha + \beta x_i$ is equal to the ``log odds'' $\ln{\frac{p_i} {1 - p_i}}$.
+
+\item Prove that $0 < p_i <1$.
+
+\item Given a set of pairs of values $(x_1, Y_1), (x_1, Y_1), \cdots (x_n, Y_n)$, form the likelihood function $L(\alpha, \beta)$ and express its logarithm in terms of $\alpha$ and $\beta$. Do not attempt to maximize it!
+
+\end{enumerate}
+
+
+
+
+
+
+\end{enumerate}
+
+\pagebreak
+
+
+
+
+
+\paragraph*{Section problems}
+
+\begin{enumerate}
+
+\item The last section problem from Module 8, which has already come under discussion.
+
+\item Exercise 11 on page 295. Answers are on page 404. You can answer all these questions with only the information that is supplied, but you need the results on page 5.
+
+\item Exercise 21 on page 297. Partial answers on page 404.
+
+\item Exercise 33 on page 299. Answers on page 405. There are lots of similar examples in sports -- perhaps this is a good topic for a final project!  (I made Westinghouse Science Talent Search Top 40 in 1959 by dining linear regression of runs scored against the sum of total bases and runners reaching base, an idea that was rediscovered in 1984.)
+
+\end{enumerate}
+
+
+
+\pagebreak
+
+
+\paragraph*{Homework assignment}
+
+This assignment should be submitted as a single R script. Include enough comments so that it is clear what you are doing and where each problem begins. You can upload it to the dropbox on the Class 9 page of the Web site. 
+
+It is OK to paste and edit lines from the scripts on the course Web site. It is not OK to paste lines from your classmates' solutions!
+
+\begin{enumerate}
+
+\item The next-to-last problem from Module 8.
+
+\item The last problem from Module 8.
+
+
+\item Exercise 12 on page 295. For part (c) look on page 261 of page 5 of the math notes.
+
+\item \begin{enumerate}
+
+\item Exercise 14 on pages 295-296.
+\item Exercise 24 on page 298.
+
+\end{enumerate}
+
+\item Exercise 34 on pages 299-300 -- very similar to the last section problem.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

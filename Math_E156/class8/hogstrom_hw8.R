@@ -43,18 +43,6 @@ hist(z.sum, breaks= "FD", probability = TRUE)
 curve(dchisq(x,6), col = "red", add = TRUE)
 
 
-# yDens <- density(y)
-# hist(yDens)
-# density <- Vectorize(function(x,y) exp(x*y)*dgamma(x,r1, lambda),vectorize.args = 'x')
-# #Integrate over y to get the moment generating function
-# mgfr1 <- function(x) sapply(x, function(y) integrate(density, lower=0, upper=20, y=y)$val)
-# curve(mgfr1(x), from = -1, to =1, lty = 1)
-
-
-
-
-
-
 # b) The Student t distribution results when you divide a standard nor- 
 # mal random variable by the square root of an independent, suitably rescaled, 
 # chi-square random variable. Nowhere does it say the the nu- merator and 
@@ -108,10 +96,6 @@ curve(dt(x,5), col = "black",xlim=c(-2,2), lty = 2, add = TRUE)
 # Using 50000 trials, confirm that the variance is close to k/(k − 2) and 
 # attempt to estimate the fourth moment in each case.
 k<-4 # define df
-# density <- Vectorize(function(x,y) exp(x*y)*my.t(x,r1, lambda),vectorize.args = 'x')
-# #Integrate over y to get the moment generating function
-# mgf <- function(x) sapply(x, function(y) integrate(density, lower=0, upper=20, y=y)$val)
-# k<-4
 N <- 50000
 vars <- numeric(N)
 M4s <- numeric(N)
@@ -129,24 +113,12 @@ var.mean <- mean(vars); var.mean
 var.expected <- k/(k-2); var.expected
 print("the mean of the observed variances are close to the expected value")
 
-
 # we can also verify using the difinition of variance for
 # continious random variables:
 # Var[X] = integral( (x-u)^2 f(x) ) from -inf to inf
 integrate(function(x) ((x-0)^2 * my.t(x, k)), -Inf, Inf)  #properly normalized
 print("this matches what we found empirically above")
 
-
-
-curve(mgfr1(x), from = -1, to =1, lty = 1)
-
-
-pr <- outer(rep(p,6),rep(p,6),"*"); pr
-
-mgf <- function(x, Y, pr)  {
-  sum(pr*(exp(x*Y)))
-}
-mgf.dice <- Vectorize(function(x) mgf(x, Y, pr))
 
 ### Part 3 
 
@@ -178,7 +150,9 @@ x.extreme <- c(.9, .98, .9, .97, .9, .99)
 x.ex.square <- mean(x.extreme)^2; x.ex.square
 x.ex.var <- var(x.extreme); x.ex.var
 print("if we pick an extreme case where all the sample values are high
-  their variance will be low (because they are all close to one). ")
+  their variance will be low (because they are all close to one) but their
+  mean will be high. This is an example of how the square mean and variance
+  could anti-correlate.")
 
 ### part 4
 
@@ -199,7 +173,6 @@ print("the standard score seems to follow a normal distribution")
 w.sample <- sample(bw,6)
 w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
 
-
 # (a) If you multiply the square of the sample mean by n, does it 
 # have a distribution that is approximately chi-square with one 
 # degree of free- dom?
@@ -207,10 +180,12 @@ N <- 10^4
 mean.square.n <- numeric(N)
 for (i in 1:N) {
     w.sample <- sample(bw,6)
-    mean.square.n[i] <- w.sample^2 * 6
+    w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
+    mean.square.n[i] <- w.standard^2 * 6
 }
 hist(mean.square.n, breaks= "FD", probability = TRUE)
 curve(dchisq(x,1), col = "red", add = TRUE)
+print("this seems a bit off")
 
 # (b) Does the sum of the squares of the samples have a distribution 
 # that is approximately chi-square with k = 6 degrees of freedom?
@@ -218,11 +193,12 @@ N <- 10^4
 sum.squares <- numeric(N)
 for (i in 1:N) {
     w.sample <- sample(bw,6)
-    sum.squares[i] <- sum(w.sample^2)
+    w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
+    sum.squares[i] <- sum(w.standard^2)
 }
 hist(sum.squares, breaks= "FD", probability = TRUE)
 curve(dchisq(x,6), col = "red", add = TRUE)
-
+print("sum of standardized squares seems to match chisq with 6 df")
 
 # (c) If you multiply the sample variance by k−1, does it have a 
 # distribution that is approximately chi-square with k − 1 = 5 degrees 
@@ -231,11 +207,13 @@ N <- 10^4
 var.times.k <- numeric(N)
 for (i in 1:N) {
     w.sample <- sample(bw,6)
-    var.times.k[i] <- var(w.sample) * 5
+    w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
+    var.times.k[i] <- var(w.standard) * 5
 }
 hist(var.times.k, breaks= "FD", probability = TRUE)
 curve(dchisq(x,5), col = "red", add = TRUE)
-
+print("multiplying the sample standard by n-1 seems to match a chisq with
+  n-1 df.")
 
 # (d) Is the square of the sample mean uncorrrelated with the sample vari- ance?
 N<-5000; 
@@ -243,19 +221,28 @@ x.mean.square <- numeric(N)
 x.var <- numeric(N)
 for (i in 1:N) {
   w.sample <- sample(bw,6)
-  x.mean.square[i] <- mean(w.sample)^2
-  x.var[i] <- var(w.sample)
+  w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
+  x.mean.square[i] <- mean(w.standard)^2
+  x.var[i] <- var(w.standard)
 }
 plot(x.mean.square,x.var)
 cor.test(x.mean.square, x.var)
-print("")
-
+print("The mean and variance seem uncorrrelated. This is probibly because
+  we took the z-scores of the samples which are N(0,1). We would expect the 
+  mean and variance to be independent.")
 
 # (e) If you divide the sample mean by the sample standard deviation,
 #  does it have an approximate Student t distribution with k − 1 = 5 
 #  degrees of freedom?
-
-# As with section problem 2, you can model your calculations on the 
-# ones in script 8B-Student t.
-
+N<-5000; 
+mean.sd.ratio <- numeric(N)
+for (i in 1:N) {
+  w.sample <- sample(bw,6)
+  w.standard <- (w.sample - mean(bw))/sqrt(var(bw))
+  x.var <- var(w.standard)
+  mean.sd.ratio[i] <- mean(w.standard)/x.var
+}
+hist(mean.sd.ratio, breaks= "FD", probability = TRUE)
+curve(dchisq(x,5), col = "red", add = TRUE)
+print("These do not seem to match up")
 
