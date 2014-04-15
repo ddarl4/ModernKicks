@@ -109,8 +109,25 @@ This is true even though the data does not fit the normal asumption.")
 ### Part 3 ### 
 
 # Exercise 12 on page 295. For part (c) look on page 261 of page 5 of the math notes.
+Beer <- read.csv('Beerwings.csv'); head(Beer)
+br <-Beer$Beer
+hw <- Beer$Hotwings
 
+# a) scatter plot of ber consumed against wings eaten
+# #find correlation between the two variables
+plot(hw,br)
+cor(hw,br)
 
+# b) find the least-squares regression line (hotwings as the independent variable)
+b <- sum( (hw-mean(hw)) * (br-mean(br)) / sum((hw-mean(hw))^2));b #equation 9.4
+#Here is the formula for the intercept
+a <- mean(br) - b*mean(hw);a   #equation 9.5
+abline(a, b, col = "red")
+print("There is a positive relationship between beer and hotwing consumption")
+
+# c) compute R-squared and state the interpretation of this statistice
+r_squared <- cor(hw,br)^2; r_squared
+paste(round(r_squared, 3),"% of the variance in beer consumption is explained by the hotwings consumed")
 
 # ### Part 4 ### 
 
@@ -125,6 +142,9 @@ plot(ill,births)
 print("birth rate and illiteracy seem positivly related")
 
 # b) find equation of least-squates line, and r^2
+#Look at the correlation
+cor(ill,births)
+# slope
 b <- sum( (ill-mean(ill)) * (births-mean(births)) / sum((ill-mean(ill))^2));b #equation 9.4
 #Here is the formula for the intercept
 a <- mean(births) - b*mean(ill);a   #equation 9.5
@@ -143,16 +163,103 @@ print("the residuals seem well suited for a linear model")
 print("no, correlation does not imply causation")
 
 # (b) Exercise 24 on page 298.
-a) find correlation between illiteracy rates and births via bootstrap
+# a) find correlation between illiteracy rates and births via bootstrap
 
-# find 95% CI using bootstrap
+n<- length(ill)
+N <- 10^4; cor.boot <- numeric(N); 
+for (i in 1:N){
+  index <- sample(1:n,n, replace = TRUE); index 
+  ill.boot <- ill[index]
+  births.boot <- births[index]
+  cor.boot[i] <- cor(ill.boot,births.boot)
+}
+mean(cor.boot)
+hist(cor.boot)
+abline(v = mean(cor.boot), col = "red")   #from the resampled data
+abline(v = cor(ill,births), col = "blue")   #observed corr
+
+# & find the 95% CI using bootstrap
+quantile( cor.boot, c(.025, .975)) #95% confidence interval for correlations
 
 # b) using a permuation test, find if illiteracy rates and birth rates
 # are independent
-
-
-# 
+n<- length(ill)
+N <- 10^4; cor.boot <- numeric(N); 
+for (i in 1:N){
+  index <- sample(1:n,n, replace = FALSE); index 
+  ill.boot <- ill
+  births.boot <- births[index] #scrample on axis
+  cor.boot[i] <- cor(ill.boot,births.boot)
+}
+mean(cor.boot)
+hist(cor.boot,xlim=c(-1,1))
+abline(v = cor(ill,births), col = "blue")   #observed corr
+pVal <- (sum(cor.boot >= cor(ill,births))+1)/(N + 1); pVal
+print("out of 10^4 permutations, none were as or more extreme than the
+    observed cor.")
 
 # ### Part 5 ### 
 
 # Exercise 34 on pages 299-300 – very similar to the last section problem.
+Titanic <- read.csv('Titanic.csv'); head(Titanic)
+survived <- Titanic$Survived
+age <- Titanic$Age
+
+plot(age,survived)
+b <- sum( (age-mean(age)) * (survived-mean(survived)) / sum((age-mean(age))^2));b #equation 9.4
+a <- mean(survived) - b*mean(age);a   #equation 9.5
+abline(a, b, col = "red") 
+
+# a) Find the logistic equation modeling the log-odds of a male passenger
+# surving the against re-arrangment
+MLL<- function(alpha, beta) -sum( log( exp(alpha+beta*age)/(1+exp(alpha+beta*age)) )*survived+ log(1/(1+exp(alpha+beta*age)))*(1-survived) )
+results<-mle(MLL,start = list(alpha = -0.1, beta = -0.02))
+results@coef
+curve( exp(results@coef[1]+results@coef[2]*x)/ (1+exp(results@coef[1]+results@coef[2]*x)),col = "blue", add=TRUE)
+
+# b) compare the odds of survival for a 30-year-old male owith a 40 year 30-year-old 
+# male.
+
+# using observed values:
+prob_30 <- sum((Titanic$Age == 30)*Titanic$Survived)/sum((Titanic$Age== 30)); prob_30
+prob_40 <- sum((Titanic$Age == 40)*Titanic$Survived)/sum((Titanic$Age== 40)); prob_40
+
+# c) Find a 95% bootstrap percentile interval for the slope.
+n <- length(survived)
+N <- 5000; cor.boot <- numeric(N); alpha.boot <- numeric(N)
+beta.boot <- numeric(N);
+for (i in 1:N){
+  index <- sample(1:n,n, replace = TRUE); index 
+  age.resamp <- age[index]
+  survived.resamp <- survived[index]
+  beta.boot[i] <- sum( (age.resamp-mean(age.resamp)) * (survived.resamp-mean(survived.resamp)) / sum((age.resamp-mean(age.resamp))^2))
+  alpha.boot[i] <- mean(survived.resamp) - beta.boot[i]*mean(age.resamp)  #equation 9.5
+}
+hist(beta.boot)   #resembles Figure 9.17a
+quantile( beta.boot, c(.025, .975)) #95% confidence interval for correlations
+
+#We can also draw 50 of the regression lines
+plot(age, survived)
+for (i in 1:50) {
+  abline(alpha.boot[i], beta.boot[i], col = "red")   #from the resampled data
+}
+abline(a, b, lwd = 4)   #from the origonal data
+
+# d) estimate the probibility of a 69-year-old male surviving, and finda 
+# 95% bootstrap percentile interval for the probability
+sum((Titanic$Age== 69))
+print("there were no data for 69 year old men recorded so we will have to infer")
+
+#predict 69-year-old male survival rate with bootstraped equations
+prob_69 <- numeric(N)
+for (i in 1:N){
+    prob_69[i] <- 69*beta.boot[i] + alpha.boot[i]
+}
+predict_orig <- (69*b + a); predict_orig
+mean(prob_69)
+print("the predicted probability from origonal linear eqn is very close to the
+    mean predicted value from the bootstraped eqn") 
+hist(prob_69)
+quantile( beta.boot, c(.025, .975)) #95% confidence interval for percent survival
+
+
