@@ -37,7 +37,6 @@ abline (v = Lower, col = "red") #vertical line at true mean
 abline (v = Upper, col = "red") #vertical line at true mean
 counter/1000 #what fraction of the time did our confidence interval include the true mean?
 
-
 print("We can also adapt the t-interval to each sample")
 counter <- 0
 plot(x =c(10,27), y = c(1,100), type = "n", xlab = "", ylab = "") #blank plot
@@ -62,9 +61,9 @@ mean.te = 5.29
 sd.te = 3.52
 q <- qt(.75,df=(n-1))
 
-print("compute a 75% one-sided upper t confidence interval for the true mean tax error")
 # forumula from page 189: x.bar + (q *S/sqrt(n))
 CI.upper <- mean.te - (q *sd.te/sqrt(n)); CI.upper
+paste(round(CI.upper,3), " to infinity is the 75% one-sided upper t confidence interval for the true mean tax error")
 
 # After solving the problem (the answer is on 
 #     page 403), do a simulation where the sales tax paid is a random 
@@ -127,7 +126,7 @@ print("There is a positive relationship between beer and hotwing consumption")
 
 # c) compute R-squared and state the interpretation of this statistice
 r_squared <- cor(hw,br)^2; r_squared
-paste(round(r_squared, 3),"% of the variance in beer consumption is explained by the hotwings consumed")
+paste(round(r_squared, 3),"% of the variance in beer consumption is explained by the hotwings consumed",sep="")
 
 # ### Part 4 ### 
 
@@ -138,7 +137,6 @@ births <- Ill$Births
 
 # a) scatter plot of birth x Illiteracy
 plot(ill,births)
-
 print("birth rate and illiteracy seem positivly related")
 
 # b) find equation of least-squates line, and r^2
@@ -156,7 +154,8 @@ PredictBirths <- a + b * ill
 ResidBirths <- births - PredictBirths
 plot(ill,ResidBirths)    #by construction, the residuals have a mean of zero
 abline(h=0, col = "red")
-print("the residuals seem well suited for a linear model")
+print("the residuals seem well suited for a linear model. They are evenly
+  distributed above and bellow 0")
 
 # d) Can we say that improving literacy will  cause the 
 # brith rates to go down?
@@ -196,7 +195,7 @@ hist(cor.boot,xlim=c(-1,1))
 abline(v = cor(ill,births), col = "blue")   #observed corr
 pVal <- (sum(cor.boot >= cor(ill,births))+1)/(N + 1); pVal
 print("out of 10^4 permutations, none were as or more extreme than the
-    observed cor.")
+    observed cor. Illiteracy and birth rates are not independent.")
 
 # ### Part 5 ### 
 
@@ -211,7 +210,8 @@ a <- mean(survived) - b*mean(age);a   #equation 9.5
 abline(a, b, col = "red") 
 
 # a) Find the logistic equation modeling the log-odds of a male passenger
-# surving the against re-arrangment
+# surving against age
+library(stats4)
 MLL<- function(alpha, beta) -sum( log( exp(alpha+beta*age)/(1+exp(alpha+beta*age)) )*survived+ log(1/(1+exp(alpha+beta*age)))*(1-survived) )
 results<-mle(MLL,start = list(alpha = -0.1, beta = -0.02))
 results@coef
@@ -223,8 +223,11 @@ curve( exp(results@coef[1]+results@coef[2]*x)/ (1+exp(results@coef[1]+results@co
 # using observed values:
 prob_30 <- sum((Titanic$Age == 30)*Titanic$Survived)/sum((Titanic$Age== 30)); prob_30
 prob_40 <- sum((Titanic$Age == 40)*Titanic$Survived)/sum((Titanic$Age== 40)); prob_40
+# you could also do this with linear or logistic predictions
 
 # c) Find a 95% bootstrap percentile interval for the slope.
+
+# test linear slope
 n <- length(survived)
 N <- 5000; cor.boot <- numeric(N); alpha.boot <- numeric(N)
 beta.boot <- numeric(N);
@@ -260,6 +263,4 @@ mean(prob_69)
 print("the predicted probability from origonal linear eqn is very close to the
     mean predicted value from the bootstraped eqn") 
 hist(prob_69)
-quantile( beta.boot, c(.025, .975)) #95% confidence interval for percent survival
-
-
+quantile( predict_orig, c(.025, .975)) #95% confidence interval for percent survival
