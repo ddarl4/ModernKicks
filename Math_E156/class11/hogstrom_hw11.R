@@ -5,7 +5,7 @@
 ### part 1 ###
 # Exercise 12 on page 202. 
 # Girls2004
-Girls2004 <- read.csv("Girls2004.csv"); Girls2004
+Girls2004 <- read.csv("Girls2004.csv"); head(Girls2004)
 # a) create exploratory plots and compare the dist. of weights between babies
 # born to nonsmokers and babies born to smokers
 
@@ -94,13 +94,52 @@ Bush saw a lower proportion of votes from women.")
 # a) Following the steps in the derivation of the bootsrap t interval in 
 # section 7.5, derive a bootstrap Z inverval for u, for cases when var is knwon
 
-
+print("Bootstrap Z confidence interval:
+    (X_bar-Q2*σ/sqrt(n), X_bar-Q1*σ/sqrt(n)
+    where Q1* and Q2* are the alpha/2 and 1-apha/2 quantiles from the empirical
+    distribution of Z statistics from many Z* = (X_bar* - x_bar)/(σ/sqrt(n))")
 
 # b) Calculate this interval for the Verison CLEC data; for var, use the sample
 # variance of the Verizon ILEC data. 
 
+Verizon <- read.csv("Verizon.csv"); head(Verizon)
+is_CLEC <- Verizon$Group == 'CLEC'
+clec_time <- Verizon$Time[is_CLEC]
+hist(clec_time)
+print("CLEC times are right skewed")
+
+empirical.sd <- sd(clec_time) # we will asume that this is the known sd
+x_bar <- mean(clec_time)
+n <- length(clec_time)
+
+N<- 10^4
+Z_star <- numeric(N);
+for(i in 1:N) {
+    x <- sample(clec_time,replace=TRUE)
+    x_bar_star <- mean(x)
+    Z_star[i] <- (x_bar_star - x_bar)/(empirical.sd/sqrt(n))
+}    
+hist(Z_star)
+
+# 95% bootstrap z interval for the mean
+Q1 <- quantile(Z_star,.025); Q1
+Q2 <- quantile(Z_star,.975); Q2
+z.boot.int <- c(x_bar-Q2*(empirical.sd/sqrt(n)),x_bar-Q1*(empirical.sd/sqrt(n))); z.boot.int
+
 # c) Compare the interval with a formula z interval. How does the bootsrap Z 
-# interval adjust for skewness
+# interval adjust for skewness?
+
+# Z-interval formula 
+Q1 <- -1.96 # 1-apha/2 interval from z dist
+Q2 <- 1.96 # apha/2 interval from z dist
+z.formula.int <- c(x_bar-Q2*(empirical.sd/sqrt(n)),x_bar-Q1*(empirical.sd/sqrt(n))); z.formula.int
+
+print("In samples where the mean time are high, the Z-score is also high
+    because we assume the variance is known. This causes the emprical Z 
+    distribution to be right shifted. The bootstrap interval better captures
+    the the right skewed values.")
+
+print("is it adjusting in the wrong direction?")
 
 # ### Part 4 ###
 # 4. (a) Exercise 38 on page 208. You will need the result of exercise 37,
