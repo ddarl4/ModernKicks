@@ -1,0 +1,192 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{xcolor}
+
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+MATHEMATICS E-156, SPRING 2014 \\
+MATHEMATICAL FOUNDATIONS OF STATISTICAL SOFTWARE
+
+\smallskip
+
+Module \#12 (Classical Hypothesis Testing)
+\end{center}
+
+Last modified: April 30, 2014
+
+\medskip
+
+\paragraph*{Reading from Chihara and Hesterberg}
+
+\begin{itemize}
+\item Chapter 8. Section 8.1 is review. The parametric methods discussed in this chapter were important in the pre-computer era, but in the context of this course they are likely to seem unexciting. 
+
+You can skip section 8.4.2.
+\end{itemize}
+
+\pagebreak
+
+
+\paragraph*{R scripts}
+\begin{itemize}
+\item Script 12A--OneSampleMeansTest
+
+Topic 1 -- hypothesis test for a mean\\
+Topic 2 -- hypothesis test for a proportion, using a binomial distribution\\
+Topic 3 -- hypothesis test for a proportion, using a binomial distribution
+
+\item Script 12B-TwoSampleTests.R
+
+Topic 1 -- two samples might come from normal distributions with same mean, unknown sigma\\
+Topic 2 -- testing whether two binomial distributions have the same proportion\\
+Topic 3 -- comparing two binomial distributions by a permutation test
+
+\item Script 12C-TypeITypeIIErrors.R
+
+Topic 1 -- Type I and Type II errors\\
+Topic 2 -- changing the test to make fewer Type II errors but more Type I errors\\
+Topic 3 -- Likelihood ratio test for a simple hypothesis.
+
+\item Script 12D-LikelihoodRatioTests.R
+
+Topic 1 -- using likelihood ratio to design the most powerful test.\\
+
+\end{itemize}
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+\paragraph*{Mathematical notes}
+
+
+
+\begin{enumerate}
+
+\item Standardizing a random variable\\
+A modern-day Robinson Crusoe has been shipwrecked on an island which may lie off the coast of Brazil. Among the few items that he was able to salvage from his sinking ship are two books: one containing tables of the distribution functions for the standard normal distribution and for Student $t$ distributions with various numbers of degrees of freedom and one named \underline{Wild Plants of the Atlantic Islands}.
+
+Like the original Crusoe, he makes raisins from the local wild grapes. From a random sample of $n$ vines, he gets an average yield of $\overline{x}$ grams of raisins. From his botany book, he learns that on islands off the coast of Brazil, the yield of raisins has a normal distribution with mean $\mu$ and variance $\sigma^2$. 
+
+\begin{enumerate}
+\item How, given available resources, can he test the null hypothesis that his island is off the coast of Brazil?
+
+
+\item Suppose that the botany book includes only the value of $\mu$, not of  $\sigma^2$, but that modern Crusoe has calculated the sample standard deviation $s$ of his raisin yields. How does he test the null hypothesis that his island is off the coast of Brazil?
+
+\end{enumerate}
+
+
+
+\pagebreak
+
+\item Likelihood ratio tests
+
+A hypothesis (null or alternative) is \emph{simple} if it completely specifies the distribution of the population. In this case, the Neyman-Pearson Lemma (not proved) asserts that the most powerful test is one in which the likelihood ratio for the competing hypotheses is set to some value $c$ (perhaps 1).
+
+(Example 8.18) You have been buying Ukrainian cyberpets, whose lifetime in years is an exponential random variable whose density function is\\ $f(X; \lambda) = \lambda e^{- \lambda X}$ with $\lambda = 8$. You suspect that the pet server has been taken over by Russians, who use $\lambda = 10$.
+
+\begin{enumerate}
+\item Design a maximum-likelihood test, assuming that you have observed the lifetimes of nine cyberpets.
+
+\item How would you arrange for the probabillity of a Type I error to be .05?
+
+\item How would you then calculate the probability of a Type II error?
+
+\item How would a Bayesian approach this problem?
+
+\end{enumerate}
+
+
+
+
+
+\end{enumerate}
+
+\pagebreak
+
+
+\paragraph*{Section problems}
+
+Section will meet on Sunday, May 11, after projects are complete.
+\begin{enumerate}
+\item Exercise 7 on page 241. Use the automated two-sample $t$ test, then, for comparison, do a permutation test.
+
+\item Exercise 17 on page 243. It takes a while to figure out what the question means! Fortunately, the answer is on page 404.
+
+\item Exercise 22 on page 243. Carry out a simulation to confirm your answers.
+\end{enumerate}
+
+\pagebreak
+
+
+\paragraph*{Homework assignment}
+
+This assignment should be submitted as a single R script. Include enough comments so that it is clear what you are doing and where each problem begins. You can upload it to the dropbox on the Class 12 page of the Web site. 
+
+It is OK to paste and edit lines from the scripts on the course Web site. It is not OK to paste lines from your classmates' solutions!
+
+We convert your lowest homework score to a perfect score. If you have done all the other homework assignments, there may be no point in handing this one in.
+
+Since I have trouble interpreting this sort of question, I have chosen odd-numbered problems, for which the numerical answers are on pages 403 and 404. 
+
+\begin{enumerate}
+\item Exercise 1 on page 240.
+
+\item Exercise 11 on page 241.
+
+\item Exercise 21 on page 243. ``Critical region'' is defined on page 224.
+
+\item Exercise 23 on page 243. Carry out a simulation to confirm your answers.
+
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
