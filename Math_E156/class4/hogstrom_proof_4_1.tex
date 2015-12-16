@@ -1,0 +1,58 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=R,basicstyle=\scriptsize\ttfamily,commentstyle=\ttfamily\color{gray},frame=single,breaklines=true,keepspaces = true,keywordstyle=\color{red},xleftmargin=-10mm}
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+Proof 9-2 \\
+Larson Hogstrom - Math E156 - 2014
+\end{center}
+
+
+
+Poisson distribution as the limit of a binomial distribution
+
+\paragraph*{}
+
+Random variable $X_n$ has a binomial distribution with parameters $n$ and $p$, expectation $\lambda = np$. So $p = \lambda / n.$
+
+Its mass function is $$P(X_n = x) = \binom{n}{x}p^x(1-p)^{n-x}=  \frac{n!}{x!(n-x)!} \frac{\lambda^x}{n^x} (1-\frac{\lambda}{n})^{n-x}.$$
+
+Take the limit as $n \rightarrow \infty$ to get the mass function for a Poisson random variable $X$:
+$$P(X = x) = e^{-\lambda}\frac{\lambda^x}{x!}.$$
+
+Solution:
+
+
+$$ \lim_{n\to\infty} \frac{n!}{x!(n-x)!} \frac{\lambda^x}{n^x} (1-\frac{\lambda}{n})^{n-x}$$
+$$ \lim_{n\to\infty} \frac{n(n-1)(n-2)..(n-x+1)!}{x!} \frac{\lambda^x}{n^x} (1-\frac{\lambda}{n})^{n-x}$$
+
+
+
+\begin{itemize}
+\item $ n(n-1)(n-2)...(n-x + 1) =  n^x + 0(n^{x-1}) $
+\item $ \lim_{n\to\infty} \frac{n(n-1)(n-2)...(n-x + 1)}{n^x x!} = \frac{1}{x!} $
+\\ \\
+Now
+$$ \lim_{n\to\infty} \frac{\lambda^x}{x!} (1-\frac{\lambda}{n})^{n}(1-\frac{\lambda}{n})^{-x}$$
+
+\item $ \lim_{n\to\infty} (1 - \frac{\lambda}{n})^n = e^{-\lambda}$
+\item $ \lim_{n\to\infty} (1 - \frac{\lambda}{n})^{-x} = 1$
+\end{itemize}
+$$ \lim_{n\to\infty} \frac{\lambda^x}{x!} e^{-\lambda} = Pois(\lambda) $$ 
+
+\paragraph*{}
+$ source: http://en.wikipedia.org/wiki/Poisson_limit_theorem $
+\end{document}

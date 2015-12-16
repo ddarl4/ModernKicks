@@ -1,0 +1,56 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=R,basicstyle=\scriptsize\ttfamily,commentstyle=\ttfamily\color{gray},frame=single,breaklines=true,keepspaces = true,keywordstyle=\color{red},xleftmargin=-10mm}
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+Proof 4-3 \\
+Larson Hogstrom - Math E156 - 2014
+\end{center}
+
+
+
+
+
+Prove that the Poisson distribution with parameter $\lambda$ has mean and variance both equal to $\lambda$. 
+Solution:
+
+$$ E[X] = \sum_{x=0}^{\infty}  x \frac{e^{-\lambda}\lambda^x}{x!} $$
+$$ E[X] = \sum_{x=1}^{\infty}  x \frac{e^{-\lambda}\lambda^x}{x!} $$
+$$ E[X] = \sum_{x=1}^{\infty}  \frac{e^{-\lambda}\lambda^x}{(x-1)!} $$
+$$ E[X] = \sum_{x=1}^{\infty}  \frac{e^{-\lambda}\lambda\lambda^{x-1}}{(x-1)!} $$
+$$ E[X] = e^{-\lambda}\lambda \sum_{x=1}^{\infty}  \frac{\lambda^{x-1}}{(x-1)!} $$
+let k = x-1
+$$ E[X] = e^{-\lambda}\lambda \sum_{k=1}^{\infty}  \frac{\lambda^k}{k!} $$
+$$ E[X] = e^{-\lambda}\lambda e^\lambda = \lambda$$
+* Taylor Series expansion of exponential function
+
+\pagebreak
+
+\paragraph*{}
+Prove that if $X_1$ and $X_2$ are independent Poisson random variables with parameters $\lambda_1$ and $\lambda_2$ respectively, then $X_1 + X_2$ is Poisson with parameter $\lambda_1 + \lambda_2$.
+
+
+$$ P(X_1 + X_2 = m) = \sum_{j=0}^m P(X_1 = j)P(X_2 = m-j) $$
+$$ = \sum_{j=0}^m e^{-\lambda_1}\frac{\lambda_1^j}{j!}  e^{-\lambda_2}  \frac{\lambda_2^{m-j}}{(m-j)!} $$
+$$ = \sum_{j=0}^m  e^{-(\lambda_1 + \lambda_2)} \frac{\lambda_1^j}{j!}    \frac{\lambda_2^{m-j}}{(m-j)!} $$
+$$ = \frac{e^{-(\lambda_1 + \lambda_2)}}{m!} \sum_{j=0}^m  \frac{m!}{j!(m-j)!} \lambda_1^j \lambda_2^{m-j}$$ 
+*Binomial to obtain $( \lambda_1 + \lambda_2 )^m $
+$$ = \frac{e^{-(\lambda_1 + \lambda_2)}}{m!} ( \lambda_1 + \lambda_2 )^m $$
+
+
+
+
+\end{document}

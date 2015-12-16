@@ -1,0 +1,52 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb,amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{language=R,basicstyle=\scriptsize\ttfamily,commentstyle=\ttfamily\color{gray},frame=single,breaklines=true,keepspaces = true,keywordstyle=\color{red},xleftmargin=-10mm}
+
+
+\topmargin = 0.1in \textwidth=5.7in \textheight=8.6in
+
+\oddsidemargin = 0.2in \evensidemargin = 0.2in
+
+
+\begin{document}
+
+
+\begin{center}
+Proof 9-2 \\
+Larson Hogstrom - Math E156 - 2014
+\end{center}
+
+\paragraph*{}
+Least-squares regression
+\paragraph*{}
+You have values $x_i$ of a ``predictor'' and matching values $y_i$ of a ``response.'' Your goal is to minimize the sum of squares of the prediction errors,
+$$g(a,b) = \sum_{i=1}^n( a + b x_i - y_i)^2.$$
+
+Prove that 
+$$b = \frac{\sum_{i=1}^n(x_i - \overline{x})(y_i - \overline{y})} {\sum_{i=1}^n(x_i - \overline{x})^2}, a =\overline{y} - b \overline{x}.$$
+
+Solution:
+
+$$ \frac{dg}{da} = 2 \sum_{i=1}^n (a + bx_i - y_i)$$
+$$ 0 = \sum_{i=1}^n (a + bx_i - y_i)$$
+$$ -na = b \sum_{i=1}^n (x_i) + \sum_{i=1}^n (y_i) $$ 
+$$ -na = bn \overline{x} +n \overline{y} $$
+$$ a =\overline{y} - b \overline{x} $$
+
+\pagebreak
+
+$$ \frac{dg}{db} = 2 \sum_{i=1}^n x_i(a + bx_i - y_i)$$
+$$ \frac{dg}{db} = 2 \sum_{i=1}^n x_i(\overline{y} - b\overline{x} + bx_i - y_i)$$
+
+Then add:
+$ - \sum_{i=1}^n \overline{x} (a + bx_i + y_i) $
+$$ 0= \sum_{i=1}^n (x_i - \overline{x})(\overline{y} - b\overline{x} + bx_i - y_i)$$
+$$ 0= \sum_{i=1}^n (x_i - \overline{x}) (bx_i - b\overline{x})   -  \sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})$$
+$$ 0= b \sum_{i=1}^n (x_i - \overline{x})^2  -  \sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})$$
+$$b = \frac{\sum_{i=1}^n(x_i - \overline{x})(y_i - \overline{y})} {\sum_{i=1}^n(x_i - \overline{x})^2} $$
+
+\end{document}
